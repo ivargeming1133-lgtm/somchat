@@ -1,443 +1,222 @@
-<!doctype html>
-<html lang="so">
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f766e">
-<title>SOM CHAT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#202c33">
+<title>somchat</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--g:#0f766e;--g2:#14b8a6;--bg:#0b141a;--pn:#111b21;--bub:#005c4b;--in:#202c33;--tx:#e9edef;--mu:#8696a0;--bl:#53bdeb}
-html,body{height:100%;background:var(--bg);color:var(--tx);font:16px system-ui,Arial,sans-serif}
-#app{height:100%;max-width:560px;margin:auto;display:flex;flex-direction:column;background:var(--bg);position:relative}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-input{font:inherit;color:var(--tx);background:var(--in);border:0;border-radius:10px;padding:12px;width:100%;outline:none}
-.top{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--pn);min-height:56px}
-.top h1{font-size:20px;flex:1}
-.ava{width:42px;height:42px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;flex:none}
-.ava img{width:100%;height:100%;object-fit:cover}
-.list{flex:1;overflow-y:auto}
-.row{display:flex;gap:12px;padding:12px 14px;align-items:center;border-bottom:1px solid #1c272e;cursor:pointer}
-.row .m{flex:1;min-width:0}
-.row b{display:block}
-.row small{color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
-.fab{position:absolute;right:18px;bottom:22px;width:56px;height:56px;border-radius:50%;background:var(--g2);color:#00221f;font-size:28px;box-shadow:0 3px 10px #0008}
-.empty{color:var(--mu);text-align:center;padding:40px 20px}
-.auth{padding:28px 22px;display:flex;flex-direction:column;gap:12px;margin:auto 0}
-.auth h1{text-align:center;font-size:30px;color:var(--g2)}
-.btn{background:var(--g2);color:#00221f;font-weight:700;padding:13px;border-radius:10px;width:100%}
-.link{color:var(--g2);text-align:center;padding:8px}
-.err{color:#ff8a80;text-align:center;font-size:14px;min-height:18px}
-.msgs{flex:1;overflow-y:auto;padding:10px 10px;display:flex;flex-direction:column;gap:4px;background:#0b141a}
-.b{max-width:80%;padding:7px 10px;border-radius:10px;background:var(--in);align-self:flex-start;word-wrap:break-word;white-space:pre-wrap}
-.b.me{background:var(--bub);align-self:flex-end}
-.b img{max-width:100%;border-radius:8px;display:block}
-.b audio{max-width:230px;height:40px}
-.b.big{font-size:44px;background:none;padding:0}
-.b.del{color:var(--mu);font-style:italic}
-.t{font-size:11px;color:var(--mu);text-align:right;margin-top:2px;white-space:nowrap}
-.tk.r{color:var(--bl)}
-.bar{display:flex;gap:6px;padding:8px;background:var(--pn);align-items:center}
-.bar input{flex:1}
-.ic{width:42px;height:42px;border-radius:50%;font-size:22px;flex:none}
-.ic.send{background:var(--g2);color:#00221f}
-.ic.rec{background:#c62828}
-.emo{display:grid;grid-template-columns:repeat(8,1fr);background:var(--pn);padding:6px;max-height:160px;overflow-y:auto}
-.emo button{font-size:26px;padding:4px}
-.sheet{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:9}
-.sheet div{background:var(--pn);width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:14px;display:flex;flex-direction:column;gap:10px}
-.sheet h3{color:var(--mu);font-size:14px}
-.sheet .btn.alt{background:var(--in);color:var(--tx)}
-.hide{display:none!important}
+:root{--bg:#0b141a;--bar:#202c33;--mine:#005c4b;--theirs:#202c33;--text:#e9edef;--dim:#8696a0;--accent:#00a884;--err:#f28b82}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.4}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hidden{display:none!important}
+#auth{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
+#auth form{width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px}
+#auth h1{font-size:2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+#auth p.sub{color:var(--dim);margin-bottom:8px}
+input{background:var(--bar);border:1px solid transparent;border-radius:10px;padding:13px 14px;width:100%}
+input::placeholder{color:var(--dim)}
+.btn{background:var(--accent);color:#06130f;border:0;border-radius:10px;padding:13px;font-weight:600;cursor:pointer}
+.link{background:none;border:0;color:var(--accent);cursor:pointer;padding:8px}
+#err{color:var(--err);min-height:1.4em;font-size:.9rem}
+#chat{height:100%;display:flex;flex-direction:column}
+header{background:var(--bar);padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#06130f;display:grid;place-items:center;font-weight:700}
+header .t{flex:1;min-width:0}
+header .t b{display:block}
+header .t span{color:var(--dim);font-size:.8rem}
+#out{background:none;border:0;color:var(--dim);cursor:pointer;padding:8px}
+#list{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:3px}
+.row{display:flex}
+.row.me{justify-content:flex-end}
+.msg{max-width:80%;padding:6px 9px 5px;border-radius:9px;background:var(--theirs);overflow-wrap:anywhere}
+.me .msg{background:var(--mine)}
+.who{display:block;color:var(--accent);font-size:.8rem;font-weight:600}
+.txt{white-space:pre-wrap}
+.time{display:block;text-align:right;color:var(--dim);font-size:.68rem;margin-top:1px}
+.empty{margin:auto;color:var(--dim);text-align:center;padding:24px}
+form#send{display:flex;gap:8px;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));background:var(--bar)}
+form#send input{background:#2a3942;border-radius:22px;padding:11px 16px}
+#go{width:46px;height:46px;flex:none;border-radius:50%;border:0;background:var(--accent);color:#06130f;cursor:pointer;display:grid;place-items:center}
+#go svg{width:22px;height:22px}
 </style>
 </head>
 <body>
-<div id="app"></div>
+
+<div id="auth" class="hidden">
+  <form id="authForm">
+    <h1>somchat</h1>
+    <p class="sub" id="sub">Sign in to start chatting.</p>
+    <input id="name" class="hidden" placeholder="Your name" autocomplete="nickname" maxlength="30">
+    <input id="email" type="email" placeholder="Email" autocomplete="email" required>
+    <input id="pass" type="password" placeholder="Password (6+ characters)" autocomplete="current-password" required>
+    <div id="err" role="alert"></div>
+    <button class="btn" id="submit" type="submit">Sign in</button>
+    <button class="link" id="toggle" type="button">New here? Create an account</button>
+  </form>
+</div>
+
+<div id="chat" class="hidden">
+  <header>
+    <div class="avatar">S</div>
+    <div class="t"><b>Everyone</b><span id="me"></span></div>
+    <button id="out" type="button">Sign out</button>
+  </header>
+  <div id="list" aria-live="polite"></div>
+  <form id="send" autocomplete="off">
+    <input id="text" placeholder="Message" maxlength="1000" aria-label="Message">
+    <button id="go" type="submit" aria-label="Send message">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </form>
+</div>
+
 <script type="module">
-/* ====== 1) PASTE YOUR FIREBASE CONFIG HERE (replace the whole block) ====== */
-const FIREBASE_CONFIG = {
-  apiKey: "PASTE",
-  authDomain: "PASTE",
-  projectId: "PASTE",
-  storageBucket: "PASTE",
-  messagingSenderId: "PASTE",
-  appId: "PASTE"
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB_dU-ViMR6LwvFQDmJ8I835azc7-TLD6M",
+  authDomain: "somchat-3fde6.firebaseapp.com",
+  projectId: "somchat-3fde6",
+  storageBucket: "somchat-3fde6.firebasestorage.app",
+  messagingSenderId: "909663365730",
+  appId: "1:909663365730:web:b201e656ac11b8619f7f3b",
+  measurementId: "G-C6ZS2TXHFY"
 };
-/* ========================================================================== */
 
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut}
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,collection,query,where,orderBy,limit,
-  onSnapshot,serverTimestamp,arrayUnion,writeBatch}
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
 
-const $ = s => document.querySelector(s);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const app = $('#app');
+let signup = false, stopMessages = null;
 
-if (FIREBASE_CONFIG.apiKey === "PASTE") {
-  app.innerHTML = '<div class="empty">Firebase config lama gelin weli.<br>Ku dheji index.html (qaybta 1).</div>';
-  throw new Error('config missing');
+function setMode(isSignup){
+  signup = isSignup;
+  $("name").classList.toggle("hidden", !signup);
+  $("name").required = signup;
+  $("submit").textContent = signup ? "Create account" : "Sign in";
+  $("toggle").textContent = signup ? "Already have an account? Sign in" : "New here? Create an account";
+  $("sub").textContent = signup ? "Pick a name so people know who you are." : "Sign in to start chatting.";
+  $("pass").autocomplete = signup ? "new-password" : "current-password";
+  $("err").textContent = "";
 }
+$("toggle").onclick = () => setMode(!signup);
 
-const fb = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(fb);
-const db = getFirestore(fb);
+const errors = {
+  "auth/email-already-in-use": "That email already has an account. Sign in instead.",
+  "auth/invalid-email": "That email address doesn’t look right.",
+  "auth/weak-password": "Password needs at least 6 characters.",
+  "auth/invalid-credential": "Wrong email or password.",
+  "auth/user-not-found": "No account with that email. Create one first.",
+  "auth/wrong-password": "Wrong email or password.",
+  "auth/operation-not-allowed": "Email/Password sign-in isn’t turned on in Firebase yet.",
+  "auth/network-request-failed": "No connection. Check your internet and try again."
+};
 
-/* ---------- state ---------- */
-let me = null, myProfile = null;
-let contacts = new Map(), chats = [];
-const profiles = new Map(), profSubs = new Map();
-let subs = [], chatSub = null, openId = null, openOther = null;
-let beat = null, homeShown = false;
+$("authForm").onsubmit = async e => {
+  e.preventDefault();
+  $("err").textContent = "";
+  $("submit").disabled = true;
+  try {
+    const email = $("email").value.trim(), pass = $("pass").value;
+    if (signup) {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(cred.user, { displayName: $("name").value.trim() });
+      showChat(cred.user);
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
+    }
+  } catch (err) {
+    $("err").textContent = errors[err.code] || "Something went wrong. Try again.";
+  }
+  $("submit").disabled = false;
+};
 
-/* ---------- helpers ---------- */
-const initial = n => (n || '?').trim().charAt(0).toUpperCase();
-const fmtT = t => new Date(t).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-const ms = ts => ts?.toMillis ? ts.toMillis() : (ts || Date.now());
-const isOnline = p => !!p && p.online && p.lastSeen && (Date.now() - ms(p.lastSeen) < 70000);
-const chatIdOf = (a, b) => [a, b].sort().join('_');
-const avaHtml = (p, name) => `<div class="ava">${p?.photo ? `<img src="${p.photo}">` : esc(initial(name))}</div>`;
-const nameOf = uid => contacts.get(uid)?.name || ('@' + (profiles.get(uid)?.username || '...'));
-const onlyEmoji = s => s && s.length <= 8 && /^(\p{Extended_Pictographic}|\u200d|\ufe0f|\s)+$/u.test(s);
+$("out").onclick = () => signOut(auth);
 
-function resizeImage(file, max, q) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => {
-      const k = Math.min(1, max / Math.max(img.width, img.height));
-      const c = document.createElement('canvas');
-      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      res(c.toDataURL('image/jpeg', q));
-    };
-    img.onerror = rej;
-    img.src = URL.createObjectURL(file);
-  });
-}
-
-function sheet(html) {
-  const s = document.createElement('div');
-  s.className = 'sheet';
-  s.innerHTML = `<div>${html}</div>`;
-  s.addEventListener('click', e => { if (e.target === s) s.remove(); });
-  document.body.appendChild(s);
-  return s;
-}
-
-/* ---------- auth ---------- */
-function authView(mode = 'login') {
-  const su = mode === 'signup';
-  app.innerHTML = `
-  <div class="auth">
-    <h1>SOM CHAT</h1>
-    ${su ? '<input id="nm" placeholder="Magacaaga" maxlength="30">' : ''}
-    <input id="un" placeholder="Username (a-z, 0-9, _)" autocapitalize="none" autocomplete="username" maxlength="20">
-    <input id="pw" type="password" placeholder="Password (ugu yaraan 6)" autocomplete="${su ? 'new-password' : 'current-password'}">
-    <div class="err" id="er"></div>
-    <button class="btn" id="go">${su ? 'Samee akoon' : 'Gal'}</button>
-    <button class="link" id="sw">${su ? 'Akoon ayaan leeyahay: Gal' : 'Akoon cusub samee'}</button>
-  </div>`;
-  $('#sw').onclick = () => authView(su ? 'login' : 'signup');
-  $('#go').onclick = async () => {
-    const u = $('#un').value.trim().toLowerCase(), pw = $('#pw').value, er = $('#er');
-    const name = su ? $('#nm').value.trim() : '';
-    if (!/^[a-z0-9_]{3,20}$/.test(u)) return er.textContent = 'Username: 3-20 xaraf (a-z, 0-9, _)';
-    if (pw.length < 6) return er.textContent = 'Password waa inuu ahaadaa 6+ xaraf';
-    if (su && !name) return er.textContent = 'Magac geli';
-    er.textContent = '...'; $('#go').disabled = true;
-    try {
-      const email = u + '@somchat.app';
-      if (su) {
-        const c = await createUserWithEmailAndPassword(auth, email, pw);
-        const b = writeBatch(db);
-        b.set(doc(db, 'usernames', u), {uid: c.user.uid});
-        b.set(doc(db, 'users', c.user.uid), {username: u, name, photo: '', online: true, lastSeen: serverTimestamp()});
-        await b.commit();
-      } else {
-        await signInWithEmailAndPassword(auth, email, pw);
+function showChat(user){
+  const name = user.displayName || user.email.split("@")[0];
+  $("me").textContent = "Signed in as " + name;
+  $("auth").classList.add("hidden");
+  $("chat").classList.remove("hidden");
+  if (stopMessages) stopMessages();
+  const q = query(collection(db, "messages"), orderBy("createdAt", "desc"), limit(100));
+  stopMessages = onSnapshot(q, snap => {
+    const list = $("list");
+    const nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 120;
+    list.replaceChildren();
+    if (snap.empty) {
+      const d = document.createElement("div");
+      d.className = "empty";
+      d.textContent = "No messages yet. Say hello!";
+      list.append(d);
+      return;
+    }
+    snap.docs.reverse().forEach(doc => {
+      const m = doc.data();
+      const row = document.createElement("div");
+      row.className = "row" + (m.uid === user.uid ? " me" : "");
+      const box = document.createElement("div");
+      box.className = "msg";
+      if (m.uid !== user.uid) {
+        const w = document.createElement("span");
+        w.className = "who"; w.textContent = m.name || "Someone";
+        box.append(w);
       }
-    } catch (e) {
-      const m = {'auth/email-already-in-use': 'Username-kan waa la qaaday',
-        'auth/invalid-credential': 'Username ama password qalad',
-        'auth/wrong-password': 'Password qalad', 'auth/user-not-found': 'Akoon ma jiro',
-        'auth/network-request-failed': 'Internet ma jiro'};
-      er.textContent = m[e.code] || e.message; $('#go').disabled = false;
-    }
-  };
+      const t = document.createElement("span");
+      t.className = "txt"; t.textContent = m.text;
+      const tm = document.createElement("span");
+      tm.className = "time";
+      const when = m.createdAt ? m.createdAt.toDate() : new Date();
+      tm.textContent = when.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      box.append(t, tm);
+      row.append(box);
+      list.append(row);
+    });
+    if (nearBottom || list.dataset.first !== "1") { list.scrollTop = list.scrollHeight; list.dataset.first = "1"; }
+  }, () => {
+    $("list").innerHTML = "";
+    const d = document.createElement("div");
+    d.className = "empty";
+    d.textContent = "Can’t load messages. Check that Firestore is created and its rules allow signed-in users.";
+    $("list").append(d);
+  });
 }
 
-/* ---------- session ---------- */
+$("send").onsubmit = async e => {
+  e.preventDefault();
+  const text = $("text").value.trim();
+  const user = auth.currentUser;
+  if (!text || !user) return;
+  $("text").value = "";
+  try {
+    await addDoc(collection(db, "messages"), {
+      text, uid: user.uid,
+      name: user.displayName || user.email.split("@")[0],
+      createdAt: serverTimestamp()
+    });
+  } catch (err) {
+    $("text").value = text;
+  }
+};
+
 onAuthStateChanged(auth, user => {
-  cleanup();
-  if (!user) { me = null; return authView(); }
-  me = user.uid;
-  app.innerHTML = '<div class="empty">...</div>';
-  subs.push(onSnapshot(doc(db, 'users', me), s => {
-    if (!s.exists()) return;
-    myProfile = s.data();
-    if (!homeShown) { homeShown = true; startHome(); }
-  }));
+  if (user) {
+    showChat(user);
+  } else {
+    if (stopMessages) { stopMessages(); stopMessages = null; }
+    $("chat").classList.add("hidden");
+    $("auth").classList.remove("hidden");
+    $("list").dataset.first = "";
+  }
 });
-
-function cleanup() {
-  subs.forEach(u => u()); subs = [];
-  profSubs.forEach(u => u()); profSubs.clear(); profiles.clear();
-  if (chatSub) { chatSub(); chatSub = null; }
-  clearInterval(beat); contacts = new Map(); chats = []; openId = null; homeShown = false; myProfile = null;
-}
-
-function setPresence(on) {
-  if (!me) return;
-  updateDoc(doc(db, 'users', me), {online: on, lastSeen: serverTimestamp()}).catch(() => {});
-}
-document.addEventListener('visibilitychange', () => setPresence(!document.hidden));
-addEventListener('pagehide', () => setPresence(false));
-
-function ensureProfile(uid) {
-  if (profSubs.has(uid)) return;
-  profSubs.set(uid, onSnapshot(doc(db, 'users', uid), s => {
-    profiles.set(uid, s.data() || {});
-    renderList(); renderHeader();
-  }, () => {}));
-}
-
-/* ---------- home ---------- */
-function startHome() {
-  app.innerHTML = `
-  <div class="top"><div id="myava"></div><h1>SOM CHAT</h1></div>
-  <div class="list" id="list"></div>
-  <button class="fab" id="add">+</button>`;
-  $('#myava').onclick = profileSheet;
-  $('#add').onclick = addContactSheet;
-  renderMyAva();
-  setPresence(true);
-  beat = setInterval(() => { if (!document.hidden) setPresence(true); }, 25000);
-
-  subs.push(onSnapshot(collection(db, 'users', me, 'contacts'), s => {
-    contacts = new Map(s.docs.map(d => [d.id, d.data()]));
-    renderList(); renderHeader();
-  }));
-  subs.push(onSnapshot(query(collection(db, 'chats'), where('members', 'array-contains', me)), s => {
-    chats = s.docs.map(d => ({id: d.id, ...d.data()}));
-    chats.forEach(c => ensureProfile(c.members.find(x => x !== me)));
-    renderList();
-  }));
-}
-
-function renderMyAva() {
-  const el = $('#myava'); if (!el) return;
-  el.innerHTML = avaHtml(myProfile, myProfile?.name);
-}
-
-function renderList() {
-  const el = $('#list'); if (!el) return;
-  if (!chats.length) { el.innerHTML = '<div class="empty">Wax sheeko ah ma jiraan.<br>Riix + si aad qof ugu darto.</div>'; return; }
-  const sorted = [...chats].sort((a, b) => ms(b.lastAt) - ms(a.lastAt));
-  el.innerHTML = sorted.map(c => {
-    const o = c.members.find(x => x !== me), p = profiles.get(o), nm = nameOf(o);
-    const last = c.lastText ? (c.lastFrom === me ? 'Adiga: ' : '') + esc(c.lastText) : '';
-    return `<div class="row" data-id="${c.id}" data-o="${o}">${avaHtml(p, nm)}
-      <div class="m"><b>${esc(nm)}</b><small>${last}</small></div>
-      <small>${c.lastAt ? fmtT(ms(c.lastAt)) : ''}</small></div>`;
-  }).join('');
-  el.querySelectorAll('.row').forEach(r => r.onclick = () => openChat(r.dataset.id, r.dataset.o));
-}
-
-function addContactSheet() {
-  const s = sheet(`<h3>Ku dar qof</h3>
-    <input id="cu" placeholder="Username-ka qofka" autocapitalize="none">
-    <input id="cn" placeholder="Magaca aad u kaydinayso" maxlength="30">
-    <div class="err" id="ce"></div>
-    <button class="btn" id="cg">Ku dar</button>`);
-  s.querySelector('#cg').onclick = async () => {
-    const u = s.querySelector('#cu').value.trim().toLowerCase().replace(/^@/, '');
-    const n = s.querySelector('#cn').value.trim(), er = s.querySelector('#ce');
-    if (!u) return er.textContent = 'Username geli';
-    try {
-      const snap = await getDoc(doc(db, 'usernames', u));
-      if (!snap.exists()) return er.textContent = 'Qofkan lama helin';
-      const uid = snap.data().uid;
-      if (uid === me) return er.textContent = 'Naftaada ma ku darin kartid';
-      const id = chatIdOf(me, uid);
-      await setDoc(doc(db, 'chats', id), {members: [me, uid].sort()}, {merge: true});
-      await setDoc(doc(db, 'users', me, 'contacts', uid), {name: n || u, chatId: id});
-      s.remove(); openChat(id, uid);
-    } catch (e) { er.textContent = e.message; }
-  };
-}
-
-function profileSheet() {
-  const s = sheet(`<h3>Profile-kaaga (@${esc(myProfile.username)})</h3>
-    <div style="display:flex;gap:12px;align-items:center">
-      <div id="pa">${avaHtml(myProfile, myProfile.name)}</div>
-      <button class="btn alt" id="pp" style="flex:1">Beddel sawirka</button>
-    </div>
-    <input type="file" id="pf" accept="image/*" class="hide">
-    <input id="pn" value="${esc(myProfile.name)}" maxlength="30">
-    <button class="btn" id="ps">Kaydi magaca</button>
-    <button class="btn alt" id="lo">Ka bax</button>`);
-  s.querySelector('#pp').onclick = () => s.querySelector('#pf').click();
-  s.querySelector('#pf').onchange = async e => {
-    const f = e.target.files[0]; if (!f) return;
-    const photo = await resizeImage(f, 160, 0.7);
-    await updateDoc(doc(db, 'users', me), {photo});
-    s.querySelector('#pa').innerHTML = avaHtml({photo}, '');
-    renderMyAva();
-  };
-  s.querySelector('#ps').onclick = async () => {
-    const name = s.querySelector('#pn').value.trim();
-    if (name) { await updateDoc(doc(db, 'users', me), {name}); s.remove(); }
-  };
-  s.querySelector('#lo').onclick = async () => { setPresence(false); s.remove(); await signOut(auth); };
-}
-
-/* ---------- chat ---------- */
-const EMOJIS = '😀 😂 🤣 😊 😍 😘 😎 🤔 😢 😭 😡 👍 👎 🙏 👏 💪 🔥 ❤️ 💔 🎉 😴 🤝 🙌 😅 😉 🥰 😇 🤲 ✅ ❌ ⭐ 🌹'.split(' ');
-
-function openChat(id, other) {
-  openId = id; openOther = other;
-  history.pushState({chat: 1}, '');
-  ensureProfile(other);
-  app.innerHTML = `
-  <div class="top"><button id="bk" style="font-size:24px">←</button>
-    <div id="hd" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0"></div></div>
-  <div class="msgs" id="ms"></div>
-  <div class="emo hide" id="em">${EMOJIS.map(e => `<button>${e}</button>`).join('')}</div>
-  <div class="bar">
-    <button class="ic" id="eb">😊</button>
-    <button class="ic" id="pb">📷</button>
-    <input type="file" id="pf" accept="image/*" class="hide">
-    <input id="tx" placeholder="Fariin..." autocomplete="off">
-    <button class="ic send" id="sd">➤</button>
-    <button class="ic" id="mc">🎤</button>
-  </div>`;
-  $('#bk').onclick = () => history.back();
-  renderHeader();
-
-  const tx = $('#tx'), sd = $('#sd'), mc = $('#mc');
-  const toggle = () => { const has = tx.value.trim().length > 0; sd.classList.toggle('hide', !has); mc.classList.toggle('hide', has); };
-  tx.oninput = toggle; toggle();
-  tx.onkeydown = e => { if (e.key === 'Enter') sd.click(); };
-  sd.onclick = () => { const t = tx.value.trim(); if (!t) return; tx.value = ''; toggle(); send({type: 'text', text: t}); };
-  $('#eb').onclick = () => $('#em').classList.toggle('hide');
-  $('#em').querySelectorAll('button').forEach(b => b.onclick = () => { tx.value += b.textContent; toggle(); tx.focus(); });
-  $('#pb').onclick = () => $('#pf').click();
-  $('#pf').onchange = async e => {
-    const f = e.target.files[0]; if (!f) return;
-    const data = await resizeImage(f, 900, 0.65);
-    if (data.length > 900000) return alert('Sawirka aad buu u weyn yahay');
-    send({type: 'image', text: '📷 Sawir', data});
-  };
-  setupRecorder(mc);
-
-  if (chatSub) chatSub();
-  chatSub = onSnapshot(query(collection(db, 'chats', id, 'messages'), orderBy('at', 'desc'), limit(200)), s => {
-    const docs = s.docs.map(d => ({id: d.id, ...d.data()})).reverse();
-    renderMsgs(docs);
-    const unread = docs.filter(m => m.from !== me && m.status !== 'read');
-    if (unread.length) {
-      const b = writeBatch(db);
-      unread.forEach(m => b.update(doc(db, 'chats', id, 'messages', m.id), {status: 'read'}));
-      b.commit().catch(() => {});
-    }
-  });
-}
-
-addEventListener('popstate', () => {
-  if (!openId) return;
-  if (chatSub) { chatSub(); chatSub = null; }
-  openId = null; startHome(); // rebuild home shell
-});
-
-function renderHeader() {
-  const el = $('#hd'); if (!el || !openId) return;
-  const p = profiles.get(openOther), nm = nameOf(openOther);
-  const st = isOnline(p) ? 'online' : (p?.lastSeen ? 'ugu dambeyn: ' + fmtT(ms(p.lastSeen)) : '');
-  el.innerHTML = `${avaHtml(p, nm)}<div style="min-width:0"><b>${esc(nm)}</b><small style="display:block;color:var(--mu)">${st}</small></div>`;
-}
-setInterval(renderHeader, 20000);
-
-function ticks(m) {
-  if (m.status === 'read') return '<span class="tk r">✓✓</span>';
-  if (m.status === 'delivered') return '<span class="tk">✓✓</span>';
-  return '<span class="tk">✓</span>';
-}
-
-function renderMsgs(list) {
-  const el = $('#ms'); if (!el) return;
-  const near = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
-  el.innerHTML = list.filter(m => !(m.deletedFor || []).includes(me)).map(m => {
-    const mine = m.from === me, time = fmtT(ms(m.at));
-    let body;
-    if (m.deletedAll) body = '🚫 Fariintan waa la tirtiray';
-    else if (m.type === 'image') body = `<img src="${m.data}">`;
-    else if (m.type === 'audio') body = `<audio controls src="${m.data}"></audio>`;
-    else body = esc(m.text);
-    const big = !m.deletedAll && m.type === 'text' && onlyEmoji(m.text);
-    return `<div class="b ${mine ? 'me' : ''} ${m.deletedAll ? 'del' : ''} ${big ? 'big' : ''}" data-id="${m.id}" data-mine="${mine ? 1 : 0}" data-d="${m.deletedAll ? 1 : 0}">
-      ${body}<div class="t">${time} ${mine && !m.deletedAll ? ticks(m) : ''}</div></div>`;
-  }).join('');
-  el.querySelectorAll('.b').forEach(b => b.onclick = e => {
-    if (e.target.tagName === 'AUDIO' || b.dataset.d === '1') return;
-    msgSheet(b.dataset.id, b.dataset.mine === '1');
-  });
-  if (near || !el.dataset.init) { el.scrollTop = el.scrollHeight; el.dataset.init = 1; }
-}
-
-function msgSheet(mid, mine) {
-  const s = sheet(`<h3>Fariinta</h3>
-    <button class="btn alt" id="d1">Iska tirtir (aniga)</button>
-    ${mine ? '<button class="btn alt" id="d2">Qof walba u tirtir</button>' : ''}`);
-  const ref = doc(db, 'chats', openId, 'messages', mid);
-  s.querySelector('#d1').onclick = () => { updateDoc(ref, {deletedFor: arrayUnion(me)}); s.remove(); };
-  if (mine) s.querySelector('#d2').onclick = () => { updateDoc(ref, {deletedAll: true}); s.remove(); };
-}
-
-async function send({type, text, data = ''}) {
-  const id = openId, other = openOther;
-  const online = isOnline(profiles.get(other));
-  await addDoc(collection(db, 'chats', id, 'messages'), {
-    from: me, type, text, data, at: serverTimestamp(),
-    status: online ? 'delivered' : 'sent', deletedFor: [], deletedAll: false
-  });
-  await updateDoc(doc(db, 'chats', id), {lastText: text, lastAt: serverTimestamp(), lastFrom: me});
-}
-
-/* ---------- voice messages ---------- */
-function setupRecorder(btn) {
-  let rec = null, chunks = [], t0 = 0, stopT = null;
-  const start = async e => {
-    e.preventDefault();
-    try {
-      const st = await navigator.mediaDevices.getUserMedia({audio: true});
-      const mt = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm'].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
-      rec = new MediaRecorder(st, mt ? {mimeType: mt, audioBitsPerSecond: 24000} : {});
-      chunks = []; t0 = Date.now();
-      rec.ondataavailable = ev => chunks.push(ev.data);
-      rec.onstop = () => {
-        st.getTracks().forEach(t => t.stop()); clearTimeout(stopT);
-        btn.classList.remove('rec');
-        if (Date.now() - t0 < 1000) return;
-        const blob = new Blob(chunks, {type: rec.mimeType || 'audio/webm'});
-        const fr = new FileReader();
-        fr.onload = () => {
-          if (fr.result.length > 900000) return alert('Codku aad buu u dheer yahay');
-          send({type: 'audio', text: '🎤 Cod', data: fr.result});
-        };
-        fr.readAsDataURL(blob);
-      };
-      rec.start(); btn.classList.add('rec');
-      stopT = setTimeout(() => rec.state === 'recording' && rec.stop(), 60000);
-    } catch { alert('Makarafoonka oggolow'); }
-  };
-  const stop = () => { if (rec && rec.state === 'recording') rec.stop(); };
-  btn.addEventListener('pointerdown', start);
-  btn.addEventListener('pointerup', stop);
-  btn.addEventListener('pointerleave', stop);
-  btn.addEventListener('contextmenu', e => e.preventDefault());
-}
 </script>
 </body>
-</html>
+  </html>
