@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang='so'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1'>
+<title>SOM_CHAT</title>
+<style>
+:root{--bg:#ffffff;--card:#eaf1fb;--green:#1565c0;--txt:#10213a;--mut:#5d6f8a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:var(--bg);color:var(--txt);height:100vh;overflow:hidden}
+.screen{display:none;height:100vh;flex-direction:column}
+#login{display:flex;align-items:center;justify-content:center;gap:12px;padding:20px}
+#login h1{font-size:36px;color:var(--green)}
+input{padding:12px 16px;border:1px solid #c5d3e8;border-radius:22px;font-size:16px;width:100%;background:var(--card);color:var(--txt);outline:none}
+#login input{max-width:320px}
+button{cursor:pointer;border:none;border-radius:22px;padding:10px 18px;font-size:15px;background:var(--green);color:#fff}
+.top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:8px}
+.top b{flex:1;text-align:center;font-size:18px}
+.logo{width:38px;height:38px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.ic{background:var(--card);border-radius:50%;width:40px;height:40px;padding:0;font-size:18px;margin-left:6px}
+.back{background:var(--card)}
+.pane{display:none;flex:1;overflow-y:auto;padding:10px 14px}
+.chips{display:flex;gap:8px;margin:12px 0}
+.chip{padding:7px 14px;border-radius:18px;background:var(--card);font-size:14px;cursor:pointer}
+.chip.on{background:var(--green);color:#fff}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0}
+.av{width:48px;height:48px;border-radius:50%;background:#1976d2;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;flex-shrink:0}
+.row b{flex:1;cursor:pointer}
+.nav{display:flex;background:var(--card);margin:8px 12px 12px;border-radius:30px;padding:6px}
+.nav button{flex:1;background:transparent;color:var(--mut);font-size:11px;border-radius:24px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px}
+.nav button span{font-size:20px}
+.nav button.on{background:var(--bg);color:var(--green)}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px}
+.soon{color:var(--mut);text-align:center;padding:40px 10px}
+.st{border-radius:14px;overflow:hidden;margin-bottom:10px;background:var(--card)}
+.st .tx{padding:36px 16px;text-align:center;font-size:20px;color:#fff;word-wrap:break-word}
+.st img{width:100%;display:block}
+.st .hd{padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.st .hd button{padding:4px 10px;font-size:12px;background:#8b2c2c}
+#msgs{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.m{max-width:75%;padding:8px 12px;border-radius:14px;word-wrap:break-word;background:var(--card)}
+.me{align-self:flex-end;background:var(--green);color:#fff}
+.m img{max-width:100%;border-radius:8px}
+.m audio{max-width:100%}
+.bar{display:flex;gap:6px;padding:8px 10px;align-items:center}
+.bar input{flex:1}
+.bar label{font-size:24px;cursor:pointer}
+.bar button{padding:10px 12px}
+#codebox,#code2box{display:none}
+.sp{margin-top:10px}
+</style></head>
+<body>
+
+<div id='login' class='screen'>
+  <h1>SOM_CHAT</h1>
+  <button id='gbtn'>Ku gal Google</button>
+  <p style='color:var(--mut)'>ama lambar telefoon</p>
+  <input id='phone' type='tel' placeholder='+252xxxxxxxxx'>
+  <button id='sendcode'>Dir code</button>
+  <div id='codebox'>
+    <input id='code' type='tel' placeholder='Code-ka 6 lambar'>
+    <button class='sp' id='verify'>Xaqiiji</button>
+  </div>
+</div>
+
+<div id='app' class='screen'>
+  <div class='top'>
+    <div class='logo'>S</div><b>SOM_CHAT</b>
+    <div><button class='ic' id='goMe'>👤</button><button class='ic' id='goFind'>➕</button></div>
+  </div>
+  <div id='p-chats' class='pane'>
+    <input id='sq' placeholder='Raadi sheeko'>
+    <div class='chips'><span class='chip on' id='cAll'>Dhammaan</span><span class='chip' id='cGrp'>Kooxo</span></div>
+    <div id='reqs'></div>
+    <div id='list'></div>
+  </div>
+  <div id='p-status' class='pane'>
+    <div class='card'>
+      <b>Status-kayga</b>
+      <div class='sp'>
+        <button id='stText'>✏️ Qoraal</button>
+        <label class='sp' style='display:inline-block'><span style='background:var(--green);padding:10px 18px;border-radius:22px;cursor:pointer;display:inline-block'>📷 Sawir</span><input id='stImg' type='file' accept='image/*' hidden></label>
+      </div>
+    </div>
+    <div id='stList'></div>
+  </div>
+  <div id='p-comm' class='pane'><div class='soon'>Bulshooyinka (Communities) waa soo socdaan.</div></div>
+  <div id='p-calls' class='pane'><div class='soon'>Wicitaannada (cod iyo video) waa soo socdaan, Qaybta 4.</div></div>
+  <div class='nav'>
+    <button data-t='chats'><span>💬</span>Sheeko</button>
+    <button data-t='status'><span>◉</span>Status</button>
+    <button data-t='comm'><span>👥</span>Bulshooyin</button>
+    <button data-t='calls'><span>📞</span>Wicitaan</button>
+  </div>
+</div>
+
+<div id='find' class='screen'>
+  <div class='top'><button class='ic back' id='backF'>←</button><b>Saaxiib ku dar</b><span style='width:40px'></span></div>
+  <div class='pane' style='display:block'>
+    <input id='q' placeholder='Gmail ama lambar (+252...)'>
+    <button class='sp' id='search'>Raadi</button>
+    <div id='results' class='sp'></div>
+  </div>
+</div>
+
+<div id='me' class='screen'>
+  <div class='top'><button class='ic back' id='backM'>←</button><b>Profile</b><span style='width:40px'></span></div>
+  <div class='pane' style='display:block'>
+    <p id='info' style='color:var(--mut)'></p>
+    <input class='sp' id='name' placeholder='Magacaaga'>
+    <button class='sp' id='savename'>Keydi magaca</button>
+    <div id='phonebox' class='sp'>
+      <p class='sp'>Ku dar lambar telefoon:</p>
+      <input class='sp' id='ph2' type='tel' placeholder='+252xxxxxxxxx'>
+      <button class='sp' id='sendcode2'>Dir code</button>
+      <div id='code2box'><input class='sp' id='code2' type='tel' placeholder='Code'><button class='sp' id='verify2'>Xaqiiji</button></div>
+    </div>
+    <button class='sp' id='linkg'>Ku xir Gmail</button><br>
+    <button class='sp' id='out' style='background:#8b2c2c'>Ka bax</button>
+  </div>
+</div>
+
+<div id='chat' class='screen'>
+  <div class='top'><button class='ic back' id='back'>←</button><b id='cname'></b><span style='width:40px'></span></div>
+  <div id='msgs'></div>
+  <div class='bar'>
+    <label>📷<input id='img' type='file' accept='image/*' hidden></label>
+    <button id='mic'>🎤</button>
+    <input id='txt' type='text' placeholder='Qor fariin...' maxlength='1000'>
+    <button id='send'>➤</button>
+  </div>
+</div>
+
+<div id='rc'></div>
+
+<div id='err' style='display:none;position:fixed;top:0;left:0;right:0;background:#b00020;color:#fff;padding:10px;z-index:99;font-size:14px'></div>
+<script>
+window.addEventListener('error',function(e){var b=document.getElementById('err');b.style.display='block';b.textContent='Khalad: '+e.message;});
+window.addEventListener('unhandledrejection',function(e){var b=document.getElementById('err');b.style.display='block';b.textContent='Khalad: '+((e.reason&&e.reason.message)||e.reason);});
+setTimeout(function(){if(!window.__ok){var b=document.getElementById('err');b.style.display='block';b.textContent='Firebase ma soo dhicin. Hubi internet-ka ama dib u cusboonaysii.';}},8000);
+</script>
+<script type='module'>
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signInWithPhoneNumber, linkWithPhoneNumber, linkWithPopup, RecaptchaVerifier, updateProfile, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, updateDoc, deleteDoc, collection, addDoc, query, where, orderBy, onSnapshot, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+window.__ok = true;
+const firebaseConfig = {
+  apiKey: 'AIzaSyB_dU-ViMR6LwvFQDmJ8I835azc7-TLD6M',
+  authDomain: 'somchat-3fde6.firebaseapp.com',
+  projectId: 'somchat-3fde6',
+  storageBucket: 'somchat-3fde6.firebasestorage.app',
+  messagingSenderId: '909663365730',
+  appId: '1:909663365730:web:eb6ab3c3874b78e89f7f3b'
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+let me = null, unsubC = null, unsubF = null, unsubS = null, curCol = null, verifier = null, conf = null, conf2 = null;
+let friendIds = [], chats = [], grp = false;
+const SCREENS = ['login', 'app', 'chat', 'find', 'me'];
+const show = id => SCREENS.forEach(s => $(s).style.display = s === id ? 'flex' : 'none');
+const pid = (a, b) => [a, b].sort().join('_');
+const getV = () => { try { if (verifier) verifier.clear(); } catch (e) {} verifier = null; const box = $('rc'); box.innerHTML = ''; const d = document.createElement('div'); box.appendChild(d); verifier = new RecaptchaVerifier(auth, d, { size: 'invisible' }); return verifier; };
+const resetV = () => { try { verifier.clear(); } catch (e) {} verifier = null; $('rc').innerHTML = ''; };
+const myName = () => me.displayName || me.phoneNumber || me.email || 'Qof';
+
+function resizeImg(file, cb) {
+  const im = new Image();
+  im.onload = () => {
+    const sc = Math.min(1, 600 / Math.max(im.width, im.height));
+    const c = document.createElement('canvas');
+    c.width = im.width * sc; c.height = im.height * sc;
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    cb(c.toDataURL('image/jpeg', 0.6));
+  };
+  im.src = URL.createObjectURL(file);
+}
+
+// ---------- Gelitaan ----------
+$('gbtn').onclick = async () => {
+  const p = new GoogleAuthProvider();
+  try { await signInWithPopup(auth, p); } catch (e) { await signInWithRedirect(auth, p); }
+};
+$('sendcode').onclick = async () => {
+  try { conf = await signInWithPhoneNumber(auth, $('phone').value.trim(), getV()); $('codebox').style.display = 'block'; }
+  catch (e) { alert(e.message); resetV(); }
+};
+$('verify').onclick = async () => {
+  try { await conf.confirm($('code').value.trim()); } catch (e) { alert('Code khaldan'); }
+};
+$('out').onclick = () => signOut(auth);
+
+async function saveUser() {
+  const u = auth.currentUser;
+  await setDoc(doc(db, 'users', u.uid), {
+    uid: u.uid,
+    name: u.displayName || u.phoneNumber || u.email || 'Qof',
+    email: (u.email || '').toLowerCase(),
+    phone: u.phoneNumber || '',
+    photo: u.photoURL || '',
+    lastSeen: serverTimestamp()
+  }, { merge: true });
+}
+
+onAuthStateChanged(auth, async u => {
+  if (!u) { me = null; if (unsubF) unsubF(); if (unsubS) unsubS(); show('login'); return; }
+  me = u;
+  try { await saveUser(); } catch (e) { console.log(e); }
+  show('app'); tab('chats'); watchFriends(); watchStatus(); renderMe();
+});
+
+function tab(t) {
+  document.querySelectorAll('#app .pane').forEach(p => p.style.display = p.id === 'p-' + t ? 'block' : 'none');
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+}
+document.querySelectorAll('.nav button').forEach(b => b.onclick = () => tab(b.dataset.t));
+$('goMe').onclick = () => { renderMe(); show('me'); };
+$('goFind').onclick = () => show('find');
+$('backF').onclick = () => show('app');
+$('backM').onclick = () => show('app');
+$('cAll').onclick = () => { grp = false; $('cAll').classList.add('on'); $('cGrp').classList.remove('on'); renderList(); };
+$('cGrp').onclick = () => { grp = true; $('cGrp').classList.add('on'); $('cAll').classList.remove('on'); renderList(); };
+$('sq').oninput = renderList;
+
+// ---------- Raadi iyo saaxiibo ----------
+$('search').onclick = async () => {
+  const q = $('q').value.trim(); const box = $('results'); box.innerHTML = '';
+  if (!q) return;
+  const found = {};
+  for (const f of ['email', 'phone']) {
+    const s = await getDocs(query(collection(db, 'users'), where(f, '==', f === 'email' ? q.toLowerCase() : q)));
+    s.forEach(d => found[d.id] = d.data());
+  }
+  delete found[me.uid];
+  if (!Object.keys(found).length) { box.textContent = 'Lama helin'; return; }
+  Object.values(found).forEach(x => {
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('div'); a.className = 'av'; a.textContent = (x.name || 'Q')[0].toUpperCase();
+    const n = document.createElement('b'); n.textContent = x.name;
+    const b = document.createElement('button'); b.textContent = 'Ku dar';
+    b.onclick = async () => {
+      try {
+        await setDoc(doc(db, 'friends', pid(me.uid, x.uid)), {
+          members: [me.uid, x.uid], from: me.uid, status: 'pending',
+          names: { [me.uid]: myName(), [x.uid]: x.name || 'Qof' }
+        });
+        b.textContent = 'La diray'; b.disabled = true;
+      } catch (e) { alert(e.message); }
+    };
+    r.append(a, n, b); box.appendChild(r);
+  });
+};
+
+function watchFriends() {
+  if (unsubF) unsubF();
+  unsubF = onSnapshot(query(collection(db, 'friends'), where('members', 'array-contains', me.uid)), snap => {
+    $('reqs').innerHTML = ''; chats = []; friendIds = [];
+    snap.forEach(d => {
+      const f = d.data();
+      const o = f.members.find(m => m !== me.uid);
+      const name = (f.names && f.names[o]) || 'Qof';
+      if (f.status === 'accepted') { chats.push({ id: d.id, name }); friendIds.push(o); }
+      else {
+        const r = document.createElement('div'); r.className = 'card row';
+        const n = document.createElement('b'); n.textContent = name; r.appendChild(n);
+        if (f.from !== me.uid) {
+          const b = document.createElement('button'); b.textContent = 'Aqbal';
+          b.onclick = () => updateDoc(d.ref, { status: 'accepted' });
+          r.appendChild(b);
+        } else { const s = document.createElement('span'); s.textContent = 'Sugaya...'; r.appendChild(s); }
+        $('reqs').appendChild(r);
+      }
+    });
+    renderList();
+  });
+}
+
+function renderList() {
+  const box = $('list'); box.innerHTML = '';
+  if (grp) { box.innerHTML = '<div class=soon>Kooxaha waa soo socdaan.</div>'; return; }
+  const s = $('sq').value.trim().toLowerCase();
+  const arr = chats.filter(c => c.name.toLowerCase().includes(s));
+  if (!arr.length) { box.innerHTML = '<div class=soon>Weli saaxiib ma haysatid. Taabo ➕ si aad u raadiso.</div>'; return; }
+  arr.forEach(c => {
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('div'); a.className = 'av'; a.textContent = c.name[0].toUpperCase();
+    const n = document.createElement('b'); n.textContent = c.name;
+    n.onclick = () => openChat(c.id, c.name);
+    r.append(a, n); box.appendChild(r);
+  });
+}
+
+// ---------- Sheeko ----------
+function openChat(cid, name) {
+  show('chat'); $('cname').textContent = name;
+  curCol = collection(db, 'chats', cid, 'messages');
+  if (unsubC) unsubC();
+  unsubC = onSnapshot(query(curCol, orderBy('createdAt')), snap => {
+    const box = $('msgs'); box.innerHTML = '';
+    snap.forEach(d => {
+      const m = d.data();
+      const el = document.createElement('div');
+      el.className = 'm' + (m.uid === me.uid ? ' me' : '');
+      if (m.type === 'image') { const i = document.createElement('img'); i.src = m.data; el.appendChild(i); }
+      else if (m.type === 'audio') { const a = document.createElement('audio'); a.controls = true; a.src = m.data; el.appendChild(a); }
+      else el.textContent = m.text || '';
+      box.appendChild(el);
+    });
+    box.scrollTop = box.scrollHeight;
+  });
+}
+const sendMsg = o => addDoc(curCol, Object.assign({ uid: me.uid, createdAt: serverTimestamp() }, o)).catch(e => alert(e.message));
+$('send').onclick = () => { const t = $('txt').value.trim(); if (!t) return; $('txt').value = ''; sendMsg({ type: 'text', text: t }); };
+$('back').onclick = () => { if (unsubC) unsubC(); show('app'); };
+$('img').onchange = e => { const f = e.target.files[0]; if (!f) return; resizeImg(f, d => sendMsg({ type: 'image', data: d })); e.target.value = ''; };
+
+let rec = null, chunks = [], tm = null;
+$('mic').onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+    rec = new MediaRecorder(s, { audioBitsPerSecond: 16000 });
+    chunks = [];
+    rec.ondataavailable = e => chunks.push(e.data);
+    rec.onstop = () => {
+      s.getTracks().forEach(t => t.stop()); clearTimeout(tm); $('mic').textContent = '🎤';
+      const r = new FileReader();
+      r.onload = () => { if (r.result.length > 900000) { alert('Codku aad buu u dheer yahay'); return; } sendMsg({ type: 'audio', data: r.result }); };
+      r.readAsDataURL(new Blob(chunks, { type: rec.mimeType }));
+    };
+    rec.start(); $('mic').textContent = '⏹'; tm = setTimeout(() => rec.stop(), 30000);
+  } catch (e) { alert('Mikrafoonka ogolow'); }
+};
+
+// ---------- Status (24 saac) ----------
+async function postStatus(o) {
+  try {
+    await addDoc(collection(db, 'statuses'), Object.assign({
+      uid: me.uid, name: myName(), viewers: [me.uid].concat(friendIds), createdAt: serverTimestamp()
+    }, o));
+  } catch (e) { alert(e.message); }
+}
+$('stText').onclick = () => {
+  const t = prompt('Qor status-kaaga');
+  if (!t || !t.trim()) return;
+  const cols = ['#1565c0', '#2f6fdb', '#c0392b', '#8e44ad', '#d68910'];
+  postStatus({ type: 'text', text: t.trim().slice(0, 500), bg: cols[Math.floor(Math.random() * cols.length)] });
+};
+$('stImg').onchange = e => { const f = e.target.files[0]; if (!f) return; resizeImg(f, d => postStatus({ type: 'image', data: d })); e.target.value = ''; };
+
+function watchStatus() {
+  if (unsubS) unsubS();
+  unsubS = onSnapshot(query(collection(db, 'statuses'), where('viewers', 'array-contains', me.uid)), snap => {
+    const box = $('stList'); box.innerHTML = '';
+    const now = Date.now(); const arr = [];
+    snap.forEach(d => {
+      const s = d.data();
+      const t = s.createdAt ? s.createdAt.toMillis() : now;
+      if (now - t < 86400000) arr.push({ id: d.id, t, s });
+    });
+    arr.sort((a, b) => b.t - a.t);
+    if (!arr.length) { box.innerHTML = '<div class=soon>Status ma jiro.</div>'; return; }
+    arr.forEach(x => {
+      const c = document.createElement('div'); c.className = 'st';
+      const h = document.createElement('div'); h.className = 'hd';
+      const nm = document.createElement('b'); nm.textContent = x.s.uid === me.uid ? 'Aniga' : x.s.name;
+      const tm2 = document.createElement('span'); tm2.textContent = new Date(x.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      h.append(nm, tm2);
+      if (x.s.uid === me.uid) { const del = document.createElement('button'); del.textContent = 'Tirtir'; del.onclick = () => deleteDoc(doc(db, 'statuses', x.id)); h.appendChild(del); }
+      c.appendChild(h);
+      if (x.s.type === 'image') { const i = document.createElement('img'); i.src = x.s.data; c.appendChild(i); }
+      else { const t = document.createElement('div'); t.className = 'tx'; t.style.background = x.s.bg || '#1565c0'; t.textContent = x.s.text; c.appendChild(t); }
+      box.appendChild(c);
+    });
+  });
+}
+
+// ---------- Profile ----------
+function renderMe() {
+  const u = auth.currentUser;
+  $('info').textContent = (u.displayName || '') + ' | ' + (u.email || 'Gmail ma jiro') + ' | ' + (u.phoneNumber || 'lambar ma jiro');
+  $('name').value = u.displayName || '';
+  $('phonebox').style.display = u.phoneNumber ? 'none' : 'block';
+  $('linkg').style.display = u.email ? 'none' : 'inline-block';
+}
+$('savename').onclick = async () => { await updateProfile(auth.currentUser, { displayName: $('name').value.trim() }); await saveUser(); renderMe(); };
+$('sendcode2').onclick = async () => {
+  try { conf2 = await linkWithPhoneNumber(auth.currentUser, $('ph2').value.trim(), getV()); $('code2box').style.display = 'block'; }
+  catch (e) { alert(e.message); resetV(); }
+};
+$('verify2').onclick = async () => {
+  try { await conf2.confirm($('code2').value.trim()); await saveUser(); renderMe(); alert('Lambarka waa lagu daray'); }
+  catch (e) { alert(e.message); }
+};
+$('linkg').onclick = async () => {
+  try { await linkWithPopup(auth.currentUser, new GoogleAuthProvider()); await saveUser(); renderMe(); }
+  catch (e) { alert(e.message); }
+};
+</script>
+</body>
+</html>
