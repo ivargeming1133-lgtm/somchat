@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang='so'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1'>
+<meta name='theme-color' content='#1250d0'>
+<title>SOM_CHAT</title>
+<style>
+:root{--bg:#e9f0fc;--card:#fff;--green:#1e66f5;--txt:#0f2240;--mut:#6b7d99;--sh:0 8px 20px rgba(24,64,150,.18);--sh2:0 3px 8px rgba(24,64,150,.14)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:linear-gradient(180deg,#f4f7ff,#e1eafb);color:var(--txt);height:100vh;height:100dvh;overflow:hidden}
+.screen{display:none;height:100vh;height:100dvh;flex-direction:column}
+input{padding:13px 16px;border:1px solid #cdd9ee;border-radius:24px;font-size:16px;width:100%;background:#fff;color:var(--txt);outline:none;box-shadow:inset 0 2px 4px rgba(24,64,150,.08)}
+button{cursor:pointer;border:none;border-radius:24px;padding:11px 20px;font-size:15px;font-weight:bold;color:#fff;background:linear-gradient(180deg,#3b82ff,#1250d0);box-shadow:0 4px 10px rgba(18,80,208,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+button:active{transform:translateY(2px);box-shadow:0 1px 4px rgba(18,80,208,.35)}
+button:disabled{opacity:.6}
+.danger{background:linear-gradient(180deg,#ef5350,#b71c1c)!important}
+.sp{margin-top:10px}
+.mut{color:var(--mut)}
+#login{display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;background:linear-gradient(160deg,#2f7bff,#0b3aa8);color:#fff}
+#login h1{font-size:38px;text-shadow:0 4px 10px rgba(0,0,0,.3)}
+#login button{background:#fff;color:#1250d0;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+#login input{max-width:260px}
+.phrow{display:flex;gap:8px;align-items:center;width:100%;max-width:340px}
+.cc{background:#fff;color:var(--txt);padding:12px 8px;border-radius:24px;font-size:14px;max-width:150px;border:none;outline:none;box-shadow:var(--sh2)}
+#codebox,#code2box{display:none}
+.top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:8px;background:linear-gradient(180deg,#2f7bff,#1250d0);color:#fff;box-shadow:0 6px 16px rgba(18,80,208,.35);position:relative;z-index:5}
+.top b{flex:1;text-align:center;font-size:18px}
+.logo{background-size:cover;background-position:center;overflow:hidden;width:40px;height:40px;border-radius:50%;background-color:#fff;color:#1250d0;display:flex;align-items:center;justify-content:center;font-weight:bold;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.ic{background:rgba(255,255,255,.22);border-radius:50%;width:40px;height:40px;padding:0;font-size:18px;margin-left:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 6px rgba(0,0,0,.2)}
+.pane{display:none;flex:1;overflow-y:auto;padding:12px 14px}
+.pg{flex:1;overflow-y:auto;padding:14px}
+.chips{display:flex;gap:8px;margin:12px 0}
+.chip{padding:8px 16px;border-radius:18px;background:#fff;font-size:14px;cursor:pointer;box-shadow:var(--sh2)}
+.chip.on{background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff}
+.row{display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:10px;background:#fff;border-radius:16px;box-shadow:var(--sh2)}
+.row b{cursor:pointer}
+.av{background-size:cover;background-position:center;width:50px;height:50px;border-radius:50%;background-color:#1976d2;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;flex-shrink:0;border:2px solid #fff;box-shadow:0 4px 10px rgba(24,64,150,.3)}
+.av.big{width:120px;height:120px;font-size:48px;margin:0 auto}
+.av.sm{width:38px;height:38px;font-size:16px;cursor:pointer}
+.nav{display:flex;background:#fff;margin:8px 12px calc(12px + env(safe-area-inset-bottom));border-radius:30px;padding:6px;box-shadow:var(--sh)}
+.nav button{flex:1;background:transparent;color:var(--mut);font-size:11px;border-radius:24px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;box-shadow:none}
+.nav button span{font-size:20px}
+.nav button.on{background:linear-gradient(180deg,#e8f0ff,#d3e3ff);color:#1250d0;box-shadow:inset 0 2px 4px rgba(24,64,150,.2)}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--sh2)}
+.soon{color:var(--mut);text-align:center;padding:40px 10px}
+.st{border-radius:16px;overflow:hidden;margin-bottom:12px;background:#fff;box-shadow:var(--sh2)}
+.st .tx{padding:40px 16px;text-align:center;font-size:20px;color:#fff;word-wrap:break-word}
+.st img,.st video{width:100%;display:block}
+.st .hd{padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.st .hd button{padding:4px 10px;font-size:12px}
+#msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(160deg,#dfeaff,#f6f9ff)}
+.m{max-width:78%;padding:9px 13px;border-radius:18px 18px 18px 6px;word-wrap:break-word;background:#fff;box-shadow:0 3px 8px rgba(24,64,150,.18);user-select:none;-webkit-user-select:none}
+.me{align-self:flex-end;background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff;border-radius:18px 18px 6px 18px}
+.m img,.m video{max-width:100%;border-radius:12px;display:block}
+.m audio{max-width:100%}
+.m.del{font-style:italic;opacity:.7}
+.tm{font-size:11px;opacity:.75;margin-top:3px;text-align:right}
+.rp{border-left:3px solid #7fb0ff;background:rgba(0,0,0,.08);padding:4px 8px;border-radius:8px;margin-bottom:5px;font-size:12px}
+.rcs{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.rcs span{background:#fff;color:#000;border-radius:12px;padding:1px 7px;font-size:13px;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+#rbar{display:none;align-items:center;gap:8px;padding:6px 12px;background:#fff;border-top:1px solid #dbe5f6;font-size:13px}
+#rbar span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#rbar button{padding:4px 10px}
+.bar{display:flex;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));align-items:center;background:#fff;box-shadow:0 -4px 12px rgba(24,64,150,.12)}
+.bar input{flex:1}
+.bar label{font-size:24px;cursor:pointer}
+.bar button{padding:10px 12px}
+.ov{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:80;background:rgba(10,20,40,.55);align-items:flex-end;justify-content:center}
+.ov .box{background:#fff;border-radius:22px 22px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));width:100%;display:flex;flex-direction:column;gap:10px;box-shadow:0 -8px 24px rgba(0,0,0,.3)}
+#emo{display:flex;gap:6px;justify-content:space-around}
+.emb{background:#eef3ff;color:#000;font-size:24px;padding:8px 10px;box-shadow:var(--sh2)}
+#wgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sw{height:64px;border-radius:14px;box-shadow:var(--sh2);cursor:pointer;border:2px solid #fff}
+#viewer{z-index:95;background:#000;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#viewer img{max-width:100%;max-height:80%}
+#toast{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:rgba(15,34,64,.92);color:#fff;padding:10px 18px;border-radius:20px;z-index:99;font-size:14px;max-width:90%;text-align:center}
+#callui{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:60;background:linear-gradient(160deg,#10285a,#0b1626);color:#fff;flex-direction:column;align-items:center;justify-content:space-between}
+#rv{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;background:#0b1626}
+#lv{position:absolute;right:12px;top:70px;width:100px;height:140px;object-fit:cover;border-radius:14px;background:#222;z-index:3;display:none;box-shadow:0 6px 14px rgba(0,0,0,.5)}
+.cinfo{position:relative;z-index:3;text-align:center;margin-top:90px}
+.cinfo .av{margin:0 auto 14px;width:120px;height:120px;font-size:48px}
+.cbar{position:relative;z-index:3;display:flex;gap:16px;margin-bottom:calc(36px + env(safe-area-inset-bottom))}
+.cbar button{width:64px;height:64px;border-radius:50%;padding:0;font-size:26px;background:linear-gradient(180deg,#3a4f70,#1f2f4a)}
+.cbar .end{background:linear-gradient(180deg,#ef5350,#b71c1c)}
+#incoming{position:fixed;left:0;right:0;top:0;z-index:70;background:linear-gradient(160deg,#10285a,#0b1626);color:#fff;padding:16px;display:none;align-items:center;gap:10px;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+#incoming button{padding:10px 14px}
+#err{display:none;position:fixed;top:0;left:0;right:0;background:#b00020;color:#fff;padding:10px;z-index:99;font-size:14px}
+.mn{font-size:12px;font-weight:bold;color:#1e66f5;margin-bottom:3px}
+.me .mn{color:#cfe0ff}
+.gbadge{background:#e3edff;color:#1250d0;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:bold}
+#gadd .box{max-height:80vh}
+</style></head>
+<body>
+
+<div id='login' class='screen'>
+  <h1>SOM_CHAT</h1>
+  <p>Ku soo dhawow</p>
+  <button id='gbtn'>Ku gal Google</button>
+  <p>ama lambar telefoon</p>
+  <div class='phrow'><select class='cc' id='cc1'>
+<option value='+252' selected>🇸🇴 +252 Soomaaliya</option>
+<option value='+254'>🇰🇪 +254 Kenya</option>
+<option value='+251'>🇪🇹 +251 Itoobiya</option>
+<option value='+253'>🇩🇯 +253 Jabuuti</option>
+<option value='+291'>🇪🇷 +291 Eritrea</option>
+<option value='+256'>🇺🇬 +256 Uganda</option>
+<option value='+255'>🇹🇿 +255 Tanzania</option>
+<option value='+20'>🇪🇬 +20 Masar</option>
+<option value='+966'>🇸🇦 +966 Sacuudi</option>
+<option value='+971'>🇦🇪 +971 Imaaraad</option>
+<option value='+974'>🇶🇦 +974 Qatar</option>
+<option value='+90'>🇹🇷 +90 Turki</option>
+<option value='+44'>🇬🇧 +44 UK</option>
+<option value='+1'>🇺🇸 +1 USA / Kanada</option>
+<option value='+46'>🇸🇪 +46 Iswiidhan</option>
+<option value='+47'>🇳🇴 +47 Norway</option>
+<option value='+31'>🇳🇱 +31 Netherlands</option>
+<option value='+49'>🇩🇪 +49 Jarmal</option>
+<option value='+61'>🇦🇺 +61 Australia</option>
+</select><input id='phone' type='tel' placeholder='lambarka'></div>
+  <button id='sendcode'>Dir code</button>
+  <div id='codebox'>
+    <input id='code' type='tel' placeholder='Code-ka 6 lambar'>
+    <button class='sp' id='verify'>Xaqiiji</button>
+  </div>
+</div>
+
+<div id='app' class='screen'>
+  <div class='top'>
+    <div class='logo' id='toplogo'>S</div><b>SOM_CHAT</b>
+    <div><button class='ic' id='goMe'>👤</button><button class='ic' id='goFind'>➕</button></div>
+  </div>
+  <div id='p-chats' class='pane'>
+    <input id='sq' placeholder='Raadi sheeko'>
+    <div class='chips'><span class='chip on' id='cAll'>Dhammaan</span><span class='chip' id='cGrp'>Kooxo</span></div>
+    <button id='newGrp' style='margin-bottom:12px'>👥 Koox cusub</button>
+    <div id='reqs'></div>
+    <div id='list'></div>
+  </div>
+  <div id='p-status' class='pane'>
+    <div class='card'>
+      <b>Status-kayga</b>
+      <div class='sp'>
+        <button id='stText'>✏️ Qoraal</button>
+        <label style='display:inline-block'><span class='btnlike' style='background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff;padding:11px 18px;border-radius:24px;cursor:pointer;display:inline-block;font-weight:bold;box-shadow:0 4px 10px rgba(18,80,208,.35)'>📷 Sawir</span><input id='stImg' type='file' accept='image/*' hidden></label>
+        <label style='display:inline-block'><span style='background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff;padding:11px 18px;border-radius:24px;cursor:pointer;display:inline-block;font-weight:bold;box-shadow:0 4px 10px rgba(18,80,208,.35)'>🎬 Video</span><input id='stVid' type='file' accept='video/*' hidden></label>
+      </div>
+    </div>
+    <div id='stList'></div>
+  </div>
+  <div id='p-comm' class='pane'><div class='soon'>Bulshooyinka (Communities) waa soo socdaan.</div></div>
+  <div id='p-calls' class='pane'><div id='clist'></div></div>
+  <div class='nav'>
+    <button data-t='chats'><span>💬</span>Sheeko</button>
+    <button data-t='status'><span>◉</span>Status</button>
+    <button data-t='comm'><span>👥</span>Bulshooyin</button>
+    <button data-t='calls'><span>📞</span>Wicitaan</button>
+  </div>
+</div>
+
+<div id='find' class='screen'>
+  <div class='top'><button class='ic' id='backF'>←</button><b>Saaxiib ku dar</b><span style='width:40px'></span></div>
+  <div class='pg'>
+    <p class='mut'>Raadi lambar (sida WhatsApp)</p>
+    <div class='phrow sp'><select class='cc' id='cc2'>
+<option value='+252' selected>🇸🇴 +252 Soomaaliya</option>
+<option value='+254'>🇰🇪 +254 Kenya</option>
+<option value='+251'>🇪🇹 +251 Itoobiya</option>
+<option value='+253'>🇩🇯 +253 Jabuuti</option>
+<option value='+291'>🇪🇷 +291 Eritrea</option>
+<option value='+256'>🇺🇬 +256 Uganda</option>
+<option value='+255'>🇹🇿 +255 Tanzania</option>
+<option value='+20'>🇪🇬 +20 Masar</option>
+<option value='+966'>🇸🇦 +966 Sacuudi</option>
+<option value='+971'>🇦🇪 +971 Imaaraad</option>
+<option value='+974'>🇶🇦 +974 Qatar</option>
+<option value='+90'>🇹🇷 +90 Turki</option>
+<option value='+44'>🇬🇧 +44 UK</option>
+<option value='+1'>🇺🇸 +1 USA / Kanada</option>
+<option value='+46'>🇸🇪 +46 Iswiidhan</option>
+<option value='+47'>🇳🇴 +47 Norway</option>
+<option value='+31'>🇳🇱 +31 Netherlands</option>
+<option value='+49'>🇩🇪 +49 Jarmal</option>
+<option value='+61'>🇦🇺 +61 Australia</option>
+</select><input id='fphone' type='tel' placeholder='lambarka'></div>
+    <button class='sp' id='fsearch'>Raadi lambarka</button>
+    <p class='mut sp' style='margin-top:18px'>ama Gmail, @username, magac</p>
+    <input class='sp' id='q' placeholder='Gmail, @username ama magac'>
+    <button class='sp' id='search'>Raadi</button>
+    <div id='results' class='sp'></div>
+    <button class='sp' id='invite'>📤 U yeer saaxiib (WhatsApp)</button>
+  </div>
+</div>
+
+<div id='me' class='screen'>
+  <div class='top'><button class='ic' id='backM'>←</button><b>Profile</b><span style='width:40px'></span></div>
+  <div class='pg'>
+    <div style='text-align:center'>
+      <div id='myav' class='av big'></div>
+      <label class='sp' style='display:inline-block'><span style='background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff;padding:10px 18px;border-radius:24px;cursor:pointer;display:inline-block;font-weight:bold'>📷 Beddel sawirka</span><input id='avimg' type='file' accept='image/*' hidden></label>
+    </div>
+    <p class='sp mut'>Magac</p>
+    <input id='name' placeholder='Magacaaga' maxlength='40'>
+    <p class='sp mut'>About</p>
+    <input id='about' placeholder='Wax ka sheeg naftaada' maxlength='100'>
+    <p class='sp mut'>Username</p>
+    <input id='uname' placeholder='username' maxlength='24'>
+    <button class='sp' id='savep'>Keydi profile-ka</button>
+    <p id='info' class='sp mut'></p>
+    <div id='phonebox' class='sp'>
+      <p class='sp'>Ku dar lambar telefoon:</p>
+      <div class='phrow sp'><select class='cc' id='cc3'>
+<option value='+252' selected>🇸🇴 +252 Soomaaliya</option>
+<option value='+254'>🇰🇪 +254 Kenya</option>
+<option value='+251'>🇪🇹 +251 Itoobiya</option>
+<option value='+253'>🇩🇯 +253 Jabuuti</option>
+<option value='+291'>🇪🇷 +291 Eritrea</option>
+<option value='+256'>🇺🇬 +256 Uganda</option>
+<option value='+255'>🇹🇿 +255 Tanzania</option>
+<option value='+20'>🇪🇬 +20 Masar</option>
+<option value='+966'>🇸🇦 +966 Sacuudi</option>
+<option value='+971'>🇦🇪 +971 Imaaraad</option>
+<option value='+974'>🇶🇦 +974 Qatar</option>
+<option value='+90'>🇹🇷 +90 Turki</option>
+<option value='+44'>🇬🇧 +44 UK</option>
+<option value='+1'>🇺🇸 +1 USA / Kanada</option>
+<option value='+46'>🇸🇪 +46 Iswiidhan</option>
+<option value='+47'>🇳🇴 +47 Norway</option>
+<option value='+31'>🇳🇱 +31 Netherlands</option>
+<option value='+49'>🇩🇪 +49 Jarmal</option>
+<option value='+61'>🇦🇺 +61 Australia</option>
+</select><input id='ph2' type='tel' placeholder='lambarka'></div>
+      <button class='sp' id='sendcode2'>Dir code</button>
+      <div id='code2box'><input class='sp' id='code2' type='tel' placeholder='Code'><button class='sp' id='verify2'>Xaqiiji</button></div>
+    </div>
+    <button class='sp' id='linkg'>Ku xir Gmail</button><br>
+    <button class='sp' id='adminbtn' style='display:none'>🛠 Admin</button><br>
+    <button class='sp danger' id='out'>Ka bax</button>
+  </div>
+</div>
+
+<div id='pview' class='screen'>
+  <div class='top'><button class='ic' id='backP'>←</button><b>Profile</b><span style='width:40px'></span></div>
+  <div class='pg' style='text-align:center'>
+    <div id='pvav' class='av big'></div>
+    <h2 id='pvname' class='sp'></h2>
+    <p id='pvabout' class='sp mut'></p>
+    <p id='pvuser' class='sp'></p>
+    <p id='pvphone' class='sp mut'></p>
+    <div class='sp'><button id='pvcall'>📞 Cod</button> <button id='pvvid'>🎥 Video</button></div>
+  </div>
+</div>
+
+<div id='admin' class='screen'>
+  <div class='top'><button class='ic' id='backA'>←</button><b>Admin</b><span style='width:40px'></span></div>
+  <div class='pg'>
+    <div class='card'><b id='adcount'></b><p class='mut sp'>Halkan waxaad ka maamuli kartaa isticmaalayaasha (xaddid / fur).</p></div>
+    <div id='adlist'></div>
+  </div>
+</div>
+
+<div id='ngrp' class='screen'>
+  <div class='top'><button class='ic' id='backNG'>←</button><b>Koox cusub</b><span style='width:40px'></span></div>
+  <div class='pg'>
+    <div style='text-align:center'>
+      <div id='ngav' class='av big'>👥</div>
+      <label class='sp' style='display:inline-block'><span style='background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff;padding:10px 18px;border-radius:24px;cursor:pointer;display:inline-block;font-weight:bold'>📷 Sawirka kooxda</span><input id='ngimg' type='file' accept='image/*' hidden></label>
+    </div>
+    <input class='sp' id='ngname' placeholder='Magaca kooxda' maxlength='40'>
+    <p class='sp mut'>Dooro xubnaha (ugu badnaan 49)</p>
+    <div id='nglist'></div>
+    <button class='sp' id='ngcreate'>✅ Abuur kooxda</button>
+  </div>
+</div>
+
+<div id='ginfo' class='screen'>
+  <div class='top'><button class='ic' id='backGI'>←</button><b>Macluumaadka kooxda</b><span style='width:40px'></span></div>
+  <div class='pg'>
+    <div style='text-align:center'>
+      <div id='giav' class='av big'>👥</div>
+      <label id='gilabel' class='sp' style='display:none'><span style='background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff;padding:10px 18px;border-radius:24px;cursor:pointer;display:inline-block;font-weight:bold'>📷 Beddel sawirka</span><input id='giimg' type='file' accept='image/*' hidden></label>
+    </div>
+    <h2 id='giname' class='sp' style='text-align:center'></h2>
+    <div id='gieditbox' class='sp' style='display:none'><input id='gieditname' maxlength='40'><button class='sp' id='gisave'>Keydi magaca</button></div>
+    <p id='gicount' class='mut sp' style='text-align:center'></p>
+    <div style='text-align:center'><button class='sp' id='giaddbtn' style='display:none'>➕ Ku dar xubno</button></div>
+    <div id='gilist' class='sp'></div>
+    <button class='sp danger' id='gileave'>🚪 Ka bax kooxda</button>
+    <button class='sp danger' id='gidel' style='display:none'>🗑 Tirtir kooxda</button>
+  </div>
+</div>
+
+<div id='chat' class='screen'>
+  <div class='top'>
+    <button class='ic' id='back'>←</button>
+    <div class='av sm' id='hav'></div>
+    <b id='cname' style='text-align:left;cursor:pointer'></b>
+    <div><button class='ic' id='vcall'>📞</button><button class='ic' id='vidcall'>🎥</button><button class='ic' id='cmenu'>⋮</button></div>
+  </div>
+  <div id='msgs'></div>
+  <div id='rbar'><span id='rtxt'></span><button id='rx'>✕</button></div>
+  <div class='bar'>
+    <label>📷<input id='img' type='file' accept='image/*' hidden></label>
+    <label>🎬<input id='vidf' type='file' accept='video/*' hidden></label>
+    <button id='mic'>🎤</button>
+    <input id='txt' type='text' placeholder='Qor fariin...' maxlength='1000'>
+    <button id='send'>➤</button>
+  </div>
+</div>
+
+<div id='cm' class='ov'><div class='box'>
+  <button id='cmWall'>🖼 Wallpaper</button>
+  <button id='cmProf'>👤 Fiiri profile-ka</button>
+  <button id='cmClose' class='danger'>Xidh</button>
+</div></div>
+
+<div id='wall' class='ov'><div class='box'>
+  <b>Dooro wallpaper</b>
+  <div id='wgrid'></div>
+  <label><span style='display:block;text-align:center;background:linear-gradient(180deg,#3b82ff,#1250d0);color:#fff;padding:12px;border-radius:24px;cursor:pointer;font-weight:bold'>📷 Sawir gallery-ga</span><input id='wImg' type='file' accept='image/*' hidden></label>
+  <button id='wClear'>Ka tir wallpaper-ka</button>
+  <button id='wClose' class='danger'>Xidh</button>
+</div></div>
+
+<div id='sheet' class='ov'><div class='box'>
+  <div id='emo'></div>
+  <button id='sReply'>↩ Jawaab</button>
+  <button id='sCopy'>📋 Koobi</button>
+  <button id='sDel' class='danger'>🗑 Tirtir</button>
+  <button id='sClose' class='danger'>Xidh</button>
+</div></div>
+
+<div id='viewer' class='ov'>
+  <img id='vimg'>
+  <div><a id='vdl' download='sawir.jpg' style='color:#fff;margin-right:16px'>⬇ Soo deji</a><button id='vclose'>Xidh</button></div>
+</div>
+
+<div id='gadd' class='ov'><div class='box'>
+  <b>Ku dar xubno</b>
+  <div id='galist' style='max-height:45vh;overflow:auto'></div>
+  <button id='gaok'>Ku dar</button>
+  <button id='gaclose' class='danger'>Xidh</button>
+</div></div>
+<div id='toast'></div>
+<div id='incoming'><div class='av' id='inav'></div><div style='flex:1'><b id='inname'></b><div id='intype' style='font-size:13px;opacity:.8'></div></div><button id='inyes'>Aqbal</button><button id='inno' class='danger'>Diid</button></div>
+<div id='callui'>
+  <video id='rv' autoplay playsinline></video>
+  <video id='lv' autoplay playsinline muted></video>
+  <div class='cinfo'><div class='av' id='cav'></div><h2 id='cname2'></h2><p id='cstat'></p></div>
+  <div class='cbar'><button id='cmute'>🎤</button><button id='ccam'>🎥</button><button id='cend' class='end'>📵</button></div>
+</div>
+<div id='err'></div>
+<div id='rc'></div>
+
+<script>
+window.addEventListener('error', function (e) { var b = document.getElementById('err'); b.style.display = 'block'; b.textContent = 'Khalad: ' + e.message; });
+window.addEventListener('unhandledrejection', function (e) { var b = document.getElementById('err'); b.style.display = 'block'; b.textContent = 'Khalad: ' + ((e.reason && e.reason.message) || e.reason); });
+setTimeout(function () { if (!window.__ok) { var b = document.getElementById('err'); b.style.display = 'block'; b.textContent = 'Firebase ma soo dhicin. Hubi internet-ka ama dib u cusboonaysii.'; } }, 8000);
+</script>
+<script type='module'>
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signInWithPhoneNumber, linkWithPhoneNumber, linkWithPopup, RecaptchaVerifier, updateProfile, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, updateDoc, deleteDoc, deleteField, collection, addDoc, query, where, orderBy, onSnapshot, getDocs, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+window.__ok = true;
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyB_dU-ViMR6LwvFQDmJ8I835azc7-TLD6M',
+  authDomain: 'somchat-3fde6.firebaseapp.com',
+  projectId: 'somchat-3fde6',
+  storageBucket: 'somchat-3fde6.firebasestorage.app',
+  messagingSenderId: '909663365730',
+  appId: '1:909663365730:web:eb6ab3c3874b78e89f7f3b'
+};
+// Admin: email-ka maamulaha (waa inuu la mid yahay kan rules-ka)
+const ADMIN_EMAIL = 'ivargeming1133@gmail.com';
+// Video / sawirro waaweyn (Cloudinary, bilaash). Ku qor halkan marka aad akoon samaysato.
+const CLOUD_NAME = '';
+const UPLOAD_PRESET = '';
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+let me = null, unsubC = null, unsubF = null, unsubS = null, curCol = null, verifier = null, conf = null, conf2 = null;
+let friendIds = [], chats = [], grp = false, curChat = null, replyTo = null, selMsg = null, profFrom = 'app';
+let unsubG = null, groupsData = [], curGrp = null, ngSel = new Set(), ngPhoto = '', gaSel = new Set();
+const SCREENS = ['login', 'app', 'chat', 'find', 'me', 'pview', 'admin', 'ngrp', 'ginfo'];
+const show = id => SCREENS.forEach(s => $(s).style.display = s === id ? 'flex' : 'none');
+const pid = (a, b) => [a, b].sort().join('_');
+const myName = () => me.displayName || me.phoneNumber || me.email || 'Qof';
+const toast = t => { const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => { el.style.display = 'none'; }, 3200); };
+const getV = () => { try { if (verifier) verifier.clear(); } catch (e) {} verifier = null; const box = $('rc'); box.innerHTML = ''; const d = document.createElement('div'); box.appendChild(d); verifier = new RecaptchaVerifier(auth, d, { size: 'invisible' }); return verifier; };
+
+// ---------- Lambar iyo khaladaad ----------
+function normPhone(raw, dial) {
+  const s0 = String(raw || '').trim();
+  let d = s0.replace(/[^0-9]/g, '');
+  if (s0.startsWith('+') || s0.startsWith('00')) {
+    if (s0.startsWith('00')) d = d.slice(2);
+    if (d.length < 8 || d.length > 15) return null;
+    return '+' + d;
+  }
+  d = d.replace(/^0+/, '');
+  if (d.length < 6 || d.length > 12) return null;
+  return (dial || '+252') + d;
+}
+function authErr(e) {
+  const m = {
+    'auth/invalid-phone-number': 'Lambarku waa khaldan yahay',
+    'auth/too-many-requests': 'Isku day aad u badan. Sug wax yar kadibna mar kale isku day',
+    'auth/quota-exceeded': 'Xadka SMS-ka maanta waa dhammaaday. Isku day berri ama isticmaal Google',
+    'auth/captcha-check-failed': 'Hubinta robot-ka way fashilantay, dib u cusboonaysii bogga',
+    'auth/operation-not-allowed': 'Lambarkan / dalkan lama oggola (SMS region policy)',
+    'auth/invalid-verification-code': 'Code-ku waa khaldan yahay',
+    'auth/code-expired': 'Code-ku wuu dhacay, mar kale dir',
+    'auth/network-request-failed': 'Internet ma jiro',
+    'auth/missing-phone-number': 'Qor lambarka',
+    'auth/credential-already-in-use': 'Lambarkan akoon kale ayaa isticmaalaya'
+  };
+  return m[e.code] || e.message;
+}
+
+// ---------- Sawir / fayl ----------
+function resizeImg(file, cb) {
+  const im = new Image();
+  im.onload = () => {
+    const sc = Math.min(1, 600 / Math.max(im.width, im.height));
+    const c = document.createElement('canvas');
+    c.width = im.width * sc; c.height = im.height * sc;
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    cb(c.toDataURL('image/jpeg', 0.6));
+  };
+  im.src = URL.createObjectURL(file);
+}
+function resizeSquare(file, size, cb) {
+  const im = new Image();
+  im.onload = () => {
+    const c = document.createElement('canvas'); c.width = size; c.height = size;
+    const m = Math.min(im.width, im.height);
+    c.getContext('2d').drawImage(im, (im.width - m) / 2, (im.height - m) / 2, m, m, 0, 0, size, size);
+    cb(c.toDataURL('image/jpeg', 0.7));
+  };
+  im.src = URL.createObjectURL(file);
+}
+const fileToB64 = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+async function uploadVideo(file) {
+  if (CLOUD_NAME && UPLOAD_PRESET) {
+    const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET);
+    const r = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/video/upload', { method: 'POST', body: fd });
+    const j = await r.json();
+    if (!j.secure_url) throw new Error((j.error && j.error.message) || 'Upload-ku wuu fashilmay');
+    return j.secure_url;
+  }
+  if (file.size > 600000) throw new Error('Video weyn waxay u baahan tahay Cloudinary (bilaash). Ii sheeg si aan kuu dejiyo.');
+  return fileToB64(file);
+}
+
+// ---------- Gelitaan ----------
+$('gbtn').onclick = async () => {
+  const p = new GoogleAuthProvider();
+  try { await signInWithPopup(auth, p); }
+  catch (e) {
+    if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') { await signInWithRedirect(auth, p); }
+    else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') alert(authErr(e));
+  }
+};
+$('sendcode').onclick = async () => {
+  const p = normPhone($('phone').value, $('cc1').value);
+  if (!p) { alert('Qor lambar sax ah (dooro dalka kor ku yaal)'); return; }
+  $('sendcode').disabled = true;
+  try { conf = await signInWithPhoneNumber(auth, p, getV()); $('codebox').style.display = 'block'; toast('Code waa la diray'); }
+  catch (e) { alert(authErr(e)); }
+  $('sendcode').disabled = false;
+};
+$('verify').onclick = async () => {
+  try { await conf.confirm($('code').value.trim()); } catch (e) { alert(authErr(e)); }
+};
+$('out').onclick = () => signOut(auth);
+
+async function saveUser() {
+  const u = auth.currentUser;
+  const ref = doc(db, 'users', u.uid);
+  const d = await getDoc(ref);
+  const ex = d.exists() ? d.data() : {};
+  const nm = ex.name || u.displayName || u.phoneNumber || u.email || 'Qof';
+  await setDoc(ref, {
+    uid: u.uid, name: nm, nameLower: nm.toLowerCase(),
+    email: (u.email || '').toLowerCase(), phone: u.phoneNumber || '',
+    photo: ex.photo || u.photoURL || '', lastSeen: serverTimestamp()
+  }, { merge: true });
+}
+
+onAuthStateChanged(auth, async u => {
+  if (!u) { me = null; [unsubF, unsubS, callsUnsub, unsubG].forEach(f => { if (f) f(); }); show('login'); return; }
+  me = u;
+  try { await saveUser(); } catch (e) { console.log(e); }
+  const x = await refreshMe();
+  if (x.blocked) { alert('Akoonkaaga waa la xaddiday'); signOut(auth); return; }
+  show('app'); tab('chats'); watchFriends(); watchStatus(); watchCalls(); watchGroups(); renderMe();
+});
+
+function tab(t) {
+  document.querySelectorAll('#app .pane').forEach(p => { p.style.display = p.id === 'p-' + t ? 'block' : 'none'; });
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+}
+document.querySelectorAll('.nav button').forEach(b => { b.onclick = () => tab(b.dataset.t); });
+$('goMe').onclick = () => { renderMe(); show('me'); fillMe(); };
+$('goFind').onclick = () => show('find');
+$('backF').onclick = () => show('app');
+$('backM').onclick = () => show('app');
+$('cAll').onclick = () => { grp = false; $('cAll').classList.add('on'); $('cGrp').classList.remove('on'); renderList(); };
+$('cGrp').onclick = () => { grp = true; $('cGrp').classList.add('on'); $('cAll').classList.remove('on'); renderList(); };
+$('sq').oninput = renderList;
+
+// ---------- Avatar iyo profile ----------
+const userCache = {};
+let myPhoto = '';
+function setAv(el, name, photo) {
+  el.style.backgroundImage = photo ? 'url(' + photo + ')' : '';
+  el.textContent = photo ? '' : ((name || 'Q')[0] || 'Q').toUpperCase();
+}
+function ensureUser(uid) {
+  if (userCache[uid] !== undefined) return;
+  userCache[uid] = {};
+  getDoc(doc(db, 'users', uid)).then(d => { userCache[uid] = d.exists() ? d.data() : {}; renderList(); renderCalls(); refreshGInfo(); }).catch(() => {});
+}
+async function refreshMe() {
+  try {
+    const d = await getDoc(doc(db, 'users', me.uid));
+    const x = d.exists() ? d.data() : {};
+    myPhoto = x.photo || '';
+    setAv($('toplogo'), x.name || myName(), myPhoto);
+    return x;
+  } catch (e) { return {}; }
+}
+async function fillMe() {
+  const x = await refreshMe();
+  $('name').value = x.name || me.displayName || '';
+  $('about').value = x.about || '';
+  $('uname').value = x.username || '';
+  setAv($('myav'), x.name || myName(), myPhoto);
+}
+$('avimg').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  resizeSquare(f, 256, d => { myPhoto = d; setAv($('myav'), $('name').value || myName(), d); });
+  e.target.value = '';
+};
+const isAdminUser = () => !!(me && me.email && me.emailVerified && me.email.toLowerCase() === ADMIN_EMAIL);
+function renderMe() {
+  const u = auth.currentUser;
+  $('info').textContent = (u.email || 'Gmail ma jiro') + ' | ' + (u.phoneNumber || 'lambar ma jiro');
+  $('phonebox').style.display = u.phoneNumber ? 'none' : 'block';
+  $('linkg').style.display = u.email ? 'none' : 'inline-block';
+  $('adminbtn').style.display = isAdminUser() ? 'inline-block' : 'none';
+}
+$('savep').onclick = async () => {
+  const name = $('name').value.trim() || myName();
+  const un = $('uname').value.trim().toLowerCase().replace(/[^a-z0-9_.]/g, '');
+  try {
+    await updateProfile(auth.currentUser, { displayName: name });
+    await setDoc(doc(db, 'users', me.uid), { name, nameLower: name.toLowerCase(), about: $('about').value.trim(), username: un, photo: myPhoto || '' }, { merge: true });
+    $('uname').value = un;
+    setAv($('toplogo'), name, myPhoto);
+    toast('La keydiyay');
+  } catch (e) { alert(e.message); }
+};
+$('sendcode2').onclick = async () => {
+  const p = normPhone($('ph2').value, $('cc3').value);
+  if (!p) { alert('Qor lambar sax ah (dooro dalka)'); return; }
+  try { conf2 = await linkWithPhoneNumber(auth.currentUser, p, getV()); $('code2box').style.display = 'block'; toast('Code waa la diray'); }
+  catch (e) { alert(authErr(e)); }
+};
+$('verify2').onclick = async () => {
+  try { await conf2.confirm($('code2').value.trim()); await saveUser(); renderMe(); toast('Lambarka waa lagu daray'); }
+  catch (e) { alert(authErr(e)); }
+};
+$('linkg').onclick = async () => {
+  try { await linkWithPopup(auth.currentUser, new GoogleAuthProvider()); await saveUser(); renderMe(); }
+  catch (e) { alert(authErr(e)); }
+};
+
+// ---------- Profile-ka qofka kale ----------
+let pvUid = null;
+async function showProfile(uid) {
+  let x = userCache[uid];
+  if (!x || !x.uid) {
+    try { const d = await getDoc(doc(db, 'users', uid)); x = d.exists() ? d.data() : {}; userCache[uid] = x; } catch (e) { x = {}; }
+  }
+  pvUid = uid;
+  setAv($('pvav'), x.name, x.photo);
+  $('pvname').textContent = x.name || 'Qof';
+  $('pvabout').textContent = x.about || 'About ma jiro';
+  $('pvuser').textContent = x.username ? '@' + x.username : '';
+  $('pvphone').textContent = x.phone || '';
+  profFrom = curChat && $('chat').style.display === 'flex' ? 'chat' : 'app';
+  show('pview');
+}
+$('backP').onclick = () => show(profFrom);
+$('pvcall').onclick = () => { const c = chats.find(z => z.uid === pvUid); if (!c) { toast('Marka hore saaxiib ahow'); return; } startCall('audio', pvUid, c.name); };
+$('pvvid').onclick = () => { const c = chats.find(z => z.uid === pvUid); if (!c) { toast('Marka hore saaxiib ahow'); return; } startCall('video', pvUid, c.name); };
+
+// ---------- Raadi iyo saaxiibo ----------
+const found = {};
+async function runQuery(f, v) {
+  const s = await getDocs(query(collection(db, 'users'), where(f, '==', v)));
+  s.forEach(d => { found[d.id] = d.data(); });
+}
+async function doSearch(mode) {
+  const box = $('results'); box.textContent = 'Waa la raadinayaa...';
+  Object.keys(found).forEach(k => delete found[k]);
+  try {
+    if (mode === 'phone') {
+      const p = normPhone($('fphone').value, $('cc2').value);
+      if (!p) { box.textContent = 'Lambarku sax ma aha'; return; }
+      await runQuery('phone', p);
+    } else {
+      const v = $('q').value.trim();
+      if (!v) { box.textContent = ''; return; }
+      const low = v.toLowerCase().replace(/^@/, '');
+      if (v.includes('@') && v.includes('.') && !v.startsWith('@')) await runQuery('email', low);
+      else {
+        await runQuery('username', low);
+        const s = await getDocs(query(collection(db, 'users'), where('nameLower', '>=', low), where('nameLower', '<=', low + '\uf8ff')));
+        s.forEach(d => { found[d.id] = d.data(); });
+      }
+    }
+  } catch (e) { box.textContent = 'Khalad: ' + e.message; return; }
+  delete found[me.uid];
+  renderResults();
+}
+function renderResults() {
+  const box = $('results'); box.innerHTML = '';
+  const arr = Object.values(found);
+  if (!arr.length) {
+    box.innerHTML = '<div class=soon>Lama helin. Qofkan waxay u badan tahay inuusan weli app-ka galin, ama wuxuu ku galay Google (lambar ma lahan). U yeer.</div>';
+    return;
+  }
+  arr.forEach(x => {
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('div'); a.className = 'av'; setAv(a, x.name, x.photo);
+    const w = document.createElement('div'); w.style.flex = '1';
+    const n = document.createElement('b'); n.textContent = x.name; n.style.display = 'block';
+    const sub = document.createElement('div'); sub.className = 'mut'; sub.style.fontSize = '13px'; sub.textContent = x.about || x.phone || '';
+    w.append(n, sub);
+    const b = document.createElement('button');
+    if (friendIds.includes(x.uid)) { b.textContent = 'Saaxiib'; b.disabled = true; }
+    else {
+      b.textContent = 'Ku dar';
+      b.onclick = async () => {
+        try {
+          await setDoc(doc(db, 'friends', pid(me.uid, x.uid)), {
+            members: [me.uid, x.uid], from: me.uid, status: 'pending',
+            names: { [me.uid]: myName(), [x.uid]: x.name || 'Qof' }
+          });
+          b.textContent = 'La diray'; b.disabled = true;
+        } catch (e) { toast('Hore ayaa loo diray ama waa khalad'); }
+      };
+    }
+    r.append(a, w, b); box.appendChild(r);
+  });
+}
+$('fsearch').onclick = () => doSearch('phone');
+$('search').onclick = () => doSearch('text');
+$('invite').onclick = async () => {
+  const url = location.origin + location.pathname;
+  const text = 'Ku soo biir SOM_CHAT: ' + url;
+  try { if (navigator.share) await navigator.share({ title: 'SOM_CHAT', text, url }); else { await navigator.clipboard.writeText(text); toast('Link-ga waa la koobiyeeyay'); } }
+  catch (e) {}
+};
+
+function watchFriends() {
+  if (unsubF) unsubF();
+  unsubF = onSnapshot(query(collection(db, 'friends'), where('members', 'array-contains', me.uid)), snap => {
+    $('reqs').innerHTML = ''; chats = []; friendIds = [];
+    snap.forEach(d => {
+      const f = d.data();
+      const o = f.members.find(m => m !== me.uid);
+      const name = (f.names && f.names[o]) || 'Qof';
+      if (f.status === 'accepted') { chats.push({ id: d.id, name, uid: o }); friendIds.push(o); ensureUser(o); }
+      else {
+        const r = document.createElement('div'); r.className = 'row';
+        const n = document.createElement('b'); n.textContent = name; n.style.flex = '1'; r.appendChild(n);
+        if (f.from !== me.uid) {
+          const b = document.createElement('button'); b.textContent = 'Aqbal';
+          b.onclick = () => updateDoc(d.ref, { status: 'accepted' });
+          r.appendChild(b);
+        } else { const s = document.createElement('span'); s.className = 'mut'; s.textContent = 'Sugaya...'; r.appendChild(s); }
+        $('reqs').appendChild(r);
+      }
+    });
+    renderList();
+  });
+}
+function renderList() {
+  const box = $('list'); box.innerHTML = '';
+  const q = $('sq').value.trim().toLowerCase();
+  let items = [];
+  if (!grp) chats.forEach(c => items.push({ kind: 'f', id: c.id, name: c.name, uid: c.uid }));
+  groupsData.forEach(g => items.push({ kind: 'g', id: g.id, name: g.name, photo: g.photo, n: g.members.length }));
+  items = items.filter(x => x.name.toLowerCase().includes(q));
+  if (!items.length) { box.innerHTML = '<div class=soon>' + (grp ? 'Weli koox ma jirto. Taabo 👥 Koox cusub.' : 'Weli saaxiib ma haysatid. Taabo ➕ si aad u raadiso.') + '</div>'; return; }
+  items.sort((a, b) => a.name.localeCompare(b.name));
+  items.forEach(it => {
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('div'); a.className = 'av';
+    const n = document.createElement('b'); n.textContent = it.name; n.style.display = 'block';
+    const sub = document.createElement('div'); sub.className = 'mut'; sub.style.fontSize = '13px';
+    if (it.kind === 'g') { setGAv(a, it.name, it.photo); sub.textContent = '👥 Koox · ' + it.n + ' xubnood'; r.onclick = () => openChat(it.id, it.name, true, it.photo); }
+    else { const cu = userCache[it.uid] || {}; setAv(a, it.name, cu.photo); sub.textContent = cu.about || ''; r.onclick = () => openChat(it.id, it.name); }
+    const w = document.createElement('div'); w.style.flex = '1'; w.append(n, sub);
+    r.append(a, w); box.appendChild(r);
+  });
+}
+
+// ---------- Sheeko ----------
+const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
+function msgPreview(m) {
+  if (m.deleted) return 'Fariin la tirtiray';
+  if (m.type === 'image') return '📷 Sawir';
+  if (m.type === 'audio') return '🎤 Cod';
+  if (m.type === 'video') return '🎬 Video';
+  return (m.text || '').slice(0, 80);
+}
+function openViewer(src) { $('vimg').src = src; $('vdl').href = src; $('viewer').style.display = 'flex'; }
+$('vclose').onclick = () => { $('viewer').style.display = 'none'; $('vimg').src = ''; };
+
+function attachHold(el, fn) {
+  let t = null;
+  const stop = () => clearTimeout(t);
+  el.addEventListener('touchstart', () => { t = setTimeout(fn, 450); }, { passive: true });
+  el.addEventListener('touchend', stop); el.addEventListener('touchmove', stop); el.addEventListener('touchcancel', stop);
+  el.addEventListener('contextmenu', e => { e.preventDefault(); fn(); });
+}
+function openSheet(ref, m, mine) {
+  selMsg = { ref, m, mine };
+  const e = $('emo'); e.innerHTML = '';
+  if (!m.deleted) {
+    EMOJIS.forEach(em => {
+      const b = document.createElement('button'); b.className = 'emb'; b.textContent = em;
+      b.onclick = () => {
+        $('sheet').style.display = 'none';
+        const cur = m.reactions && m.reactions[me.uid];
+        updateDoc(ref, { ['reactions.' + me.uid]: cur === em ? deleteField() : em }).catch(err => toast(err.message));
+      };
+      e.appendChild(b);
+    });
+  }
+  $('sReply').style.display = m.deleted ? 'none' : 'block';
+  $('sDel').style.display = mine && !m.deleted ? 'block' : 'none';
+  $('sCopy').style.display = !m.deleted && (m.type === 'text' || !m.type) ? 'block' : 'none';
+  $('sheet').style.display = 'flex';
+}
+$('sClose').onclick = () => { $('sheet').style.display = 'none'; };
+$('sReply').onclick = () => {
+  $('sheet').style.display = 'none';
+  if (!selMsg) return;
+  replyTo = { name: selMsg.mine ? 'Adiga' : (curChat.group ? (selMsg.m.from || 'Qof') : curChat.name), text: msgPreview(selMsg.m) };
+  $('rtxt').textContent = '↩ ' + replyTo.name + ': ' + replyTo.text;
+  $('rbar').style.display = 'flex';
+  $('txt').focus();
+};
+$('sCopy').onclick = () => { $('sheet').style.display = 'none'; if (selMsg) navigator.clipboard.writeText(selMsg.m.text || '').then(() => toast('La koobiyeeyay')).catch(() => {}); };
+$('sDel').onclick = () => {
+  $('sheet').style.display = 'none';
+  if (selMsg && confirm('Tirtir fariinta?')) updateDoc(selMsg.ref, { deleted: true, text: '', data: '' }).catch(e => alert(e.message));
+};
+function clearReply() { replyTo = null; $('rbar').style.display = 'none'; }
+$('rx').onclick = clearReply;
+
+function openChat(cid, name, isGroup, gphoto) {
+  show('chat'); $('cname').textContent = name;
+  const other = isGroup ? null : cid.split('_').find(x => x !== me.uid);
+  curChat = { cid, name, other, group: !!isGroup };
+  if (isGroup) setGAv($('hav'), name, gphoto); else setAv($('hav'), name, (userCache[other] || {}).photo);
+  $('vcall').style.display = isGroup ? 'none' : '';
+  $('vidcall').style.display = isGroup ? 'none' : '';
+  clearReply();
+  applyWall(cid);
+  curCol = collection(db, isGroup ? 'groups' : 'chats', cid, 'messages');
+  if (unsubC) unsubC();
+  unsubC = onSnapshot(query(curCol, orderBy('createdAt')), snap => {
+    const box = $('msgs'); box.innerHTML = '';
+    snap.forEach(d => {
+      const m = d.data();
+      const mine = m.uid === me.uid;
+      const el = document.createElement('div');
+      el.className = 'm' + (mine ? ' me' : '');
+      if (isGroup && !mine && !m.deleted) { const mn = document.createElement('div'); mn.className = 'mn'; mn.textContent = m.from || 'Qof'; el.appendChild(mn); }
+      if (m.reply && !m.deleted) {
+        const rp = document.createElement('div'); rp.className = 'rp';
+        rp.textContent = m.reply.name + ': ' + m.reply.text; el.appendChild(rp);
+      }
+      if (m.deleted) { el.classList.add('del'); el.appendChild(document.createTextNode('Fariintan waa la tirtiray')); }
+      else if (m.type === 'image') { const i = document.createElement('img'); i.src = m.data; i.onclick = () => openViewer(m.data); el.appendChild(i); }
+      else if (m.type === 'video') { const v = document.createElement('video'); v.controls = true; v.setAttribute('playsinline', ''); v.preload = 'metadata'; v.src = m.data; el.appendChild(v); }
+      else if (m.type === 'audio') { const a = document.createElement('audio'); a.controls = true; a.src = m.data; el.appendChild(a); }
+      else el.appendChild(document.createTextNode(m.text || ''));
+      if (m.reactions && !m.deleted) {
+        const vals = Object.values(m.reactions);
+        if (vals.length) {
+          const rc = document.createElement('div'); rc.className = 'rcs';
+          const cnt = {}; vals.forEach(v => { cnt[v] = (cnt[v] || 0) + 1; });
+          Object.keys(cnt).forEach(k => { const sp = document.createElement('span'); sp.textContent = k + (cnt[k] > 1 ? ' ' + cnt[k] : ''); rc.appendChild(sp); });
+          el.appendChild(rc);
+        }
+      }
+      const tm = document.createElement('div'); tm.className = 'tm';
+      const ts = m.createdAt ? new Date(m.createdAt.toMillis()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      tm.textContent = ts + (mine && !m.deleted ? (isGroup ? ' ✓' : (m.seen ? ' ✓✓' : ' ✓')) : '');
+      el.appendChild(tm);
+      attachHold(el, () => openSheet(d.ref, m, mine));
+      if (!isGroup && !mine && !m.seen && !m.deleted) updateDoc(d.ref, { seen: true }).catch(() => {});
+      box.appendChild(el);
+    });
+    box.scrollTop = box.scrollHeight;
+  }, () => { toast('Fariimaha lama furi karo'); });
+}
+const sendMsg = o => {
+  const x = Object.assign({ uid: me.uid, createdAt: serverTimestamp() }, o);
+  if (curChat && curChat.group) x.from = myName();
+  if (replyTo) { x.reply = replyTo; clearReply(); }
+  return addDoc(curCol, x).catch(e => alert(e.message));
+};
+$('send').onclick = () => { const t = $('txt').value.trim(); if (!t) return; $('txt').value = ''; sendMsg({ type: 'text', text: t }); };
+$('txt').addEventListener('keydown', e => { if (e.key === 'Enter') $('send').click(); });
+$('back').onclick = () => { if (unsubC) unsubC(); show('app'); };
+$('img').onchange = e => { const f = e.target.files[0]; if (!f) return; resizeImg(f, d => sendMsg({ type: 'image', data: d })); e.target.value = ''; };
+$('vidf').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (f.size > 80e6) { alert('Video-gu aad buu u weyn yahay (80MB)'); return; }
+  toast('Video waa la soo galinayaa...');
+  try { const data = await uploadVideo(f); await sendMsg({ type: 'video', data }); toast('La diray'); }
+  catch (err) { alert(err.message); }
+};
+$('hav').onclick = () => chatInfo();
+$('cname').onclick = () => chatInfo();
+
+let rec = null, chunks = [], tm = null;
+$('mic').onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+    rec = new MediaRecorder(s, { audioBitsPerSecond: 16000 });
+    chunks = [];
+    rec.ondataavailable = e => chunks.push(e.data);
+    rec.onstop = () => {
+      s.getTracks().forEach(t => t.stop()); clearTimeout(tm); $('mic').textContent = '🎤';
+      const r = new FileReader();
+      r.onload = () => { if (r.result.length > 900000) { alert('Codku aad buu u dheer yahay'); return; } sendMsg({ type: 'audio', data: r.result }); };
+      r.readAsDataURL(new Blob(chunks, { type: rec.mimeType }));
+    };
+    rec.start(); $('mic').textContent = '⏹'; tm = setTimeout(() => rec.stop(), 30000);
+  } catch (e) { alert('Ogolow mikrafoonka'); }
+};
+
+// ---------- Menu sheeko + wallpaper ----------
+const WALLS = ['linear-gradient(160deg,#dfeaff,#f6f9ff)', 'linear-gradient(160deg,#c9f0e1,#f2fff9)', 'linear-gradient(160deg,#ffe3d1,#fff6f0)', 'linear-gradient(160deg,#e6dcff,#f7f3ff)', 'linear-gradient(160deg,#10223f,#1c3b6e)', 'linear-gradient(160deg,#0b1626,#26364d)', 'linear-gradient(160deg,#ffd6e8,#fff0f6)', '#ffffff'];
+function applyWall(cid) {
+  let w = null;
+  try { w = JSON.parse(localStorage.getItem('wall_' + cid) || 'null'); } catch (e) {}
+  const el = $('msgs');
+  if (!w) { el.style.background = ''; return; }
+  el.style.background = w.t === 'g' ? w.v : 'url(' + w.v + ') center/cover';
+}
+function saveWall(w) {
+  try { if (w) localStorage.setItem('wall_' + curChat.cid, JSON.stringify(w)); else localStorage.removeItem('wall_' + curChat.cid); }
+  catch (e) { toast('Wallpaper ma la keydin karo'); }
+  applyWall(curChat.cid);
+}
+const grid = $('wgrid');
+WALLS.forEach(v => { const d = document.createElement('div'); d.className = 'sw'; d.style.background = v; d.onclick = () => { saveWall({ t: 'g', v }); $('wall').style.display = 'none'; }; grid.appendChild(d); });
+$('wImg').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; resizeImg(f, d => { saveWall({ t: 'i', v: d }); $('wall').style.display = 'none'; }); };
+$('wClear').onclick = () => { saveWall(null); $('wall').style.display = 'none'; };
+$('wClose').onclick = () => { $('wall').style.display = 'none'; };
+$('cmenu').onclick = () => { $('cm').style.display = 'flex'; };
+$('cmClose').onclick = () => { $('cm').style.display = 'none'; };
+$('cmWall').onclick = () => { $('cm').style.display = 'none'; $('wall').style.display = 'flex'; };
+$('cmProf').onclick = () => { $('cm').style.display = 'none'; chatInfo(); };
+
+// ---------- Status (24 saac) ----------
+async function postStatus(o) {
+  try {
+    await addDoc(collection(db, 'statuses'), Object.assign({
+      uid: me.uid, name: myName(), viewers: [me.uid].concat(friendIds), createdAt: serverTimestamp()
+    }, o));
+    toast('Status waa la dhigay');
+  } catch (e) { alert(e.message); }
+}
+$('stText').onclick = () => {
+  const t = prompt('Qor status-kaaga');
+  if (!t || !t.trim()) return;
+  const cols = ['#1e66f5', '#2f6fdb', '#c0392b', '#8e44ad', '#d68910', '#16a085'];
+  postStatus({ type: 'text', text: t.trim().slice(0, 500), bg: cols[Math.floor(Math.random() * cols.length)] });
+};
+$('stImg').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; resizeImg(f, d => postStatus({ type: 'image', data: d })); };
+$('stVid').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (f.size > 80e6) { alert('Video-gu aad buu u weyn yahay (80MB)'); return; }
+  toast('Video waa la soo galinayaa...');
+  try { const data = await uploadVideo(f); await postStatus({ type: 'video', data }); }
+  catch (err) { alert(err.message); }
+};
+function watchStatus() {
+  if (unsubS) unsubS();
+  unsubS = onSnapshot(query(collection(db, 'statuses'), where('viewers', 'array-contains', me.uid)), snap => {
+    const box = $('stList'); box.innerHTML = '';
+    const now = Date.now(); const arr = [];
+    snap.forEach(d => {
+      const s = d.data();
+      const t = s.createdAt ? s.createdAt.toMillis() : now;
+      if (now - t < 86400000) arr.push({ id: d.id, t, s });
+    });
+    arr.sort((a, b) => b.t - a.t);
+    if (!arr.length) { box.innerHTML = '<div class=soon>Status ma jiro.</div>'; return; }
+    arr.forEach(x => {
+      const c = document.createElement('div'); c.className = 'st';
+      const h = document.createElement('div'); h.className = 'hd';
+      const nm = document.createElement('b'); nm.textContent = x.s.uid === me.uid ? 'Aniga' : x.s.name;
+      const tm2 = document.createElement('span'); tm2.textContent = new Date(x.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      h.append(nm, tm2);
+      if (x.s.uid === me.uid) { const del = document.createElement('button'); del.className = 'danger'; del.textContent = 'Tirtir'; del.onclick = () => deleteDoc(doc(db, 'statuses', x.id)); h.appendChild(del); }
+      c.appendChild(h);
+      if (x.s.type === 'image') { const i = document.createElement('img'); i.src = x.s.data; i.onclick = () => openViewer(x.s.data); c.appendChild(i); }
+      else if (x.s.type === 'video') { const v = document.createElement('video'); v.controls = true; v.setAttribute('playsinline', ''); v.preload = 'metadata'; v.src = x.s.data; c.appendChild(v); }
+      else { const t = document.createElement('div'); t.className = 'tx'; t.style.background = x.s.bg || '#1e66f5'; t.textContent = x.s.text; c.appendChild(t); }
+      box.appendChild(c);
+    });
+  });
+}
+
+// ---------- Admin ----------
+$('adminbtn').onclick = () => { if (!isAdminUser()) return; show('admin'); loadAdmin(); };
+$('backA').onclick = () => show('me');
+async function loadAdmin() {
+  const box = $('adlist'); box.innerHTML = 'Waa la soo dejinayaa...';
+  try {
+    const s = await getDocs(collection(db, 'users'));
+    $('adcount').textContent = s.size + ' isticmaale';
+    box.innerHTML = '';
+    s.forEach(d => {
+      const x = d.data();
+      const r = document.createElement('div'); r.className = 'row';
+      const a = document.createElement('div'); a.className = 'av'; setAv(a, x.name, x.photo);
+      const w = document.createElement('div'); w.style.flex = '1';
+      const n = document.createElement('b'); n.textContent = x.name || 'Qof'; n.style.display = 'block';
+      const sub = document.createElement('div'); sub.className = 'mut'; sub.style.fontSize = '12px'; sub.textContent = (x.phone || x.email || '') + (x.blocked ? ' · XADDIDAN' : '');
+      w.append(n, sub);
+      r.append(a, w);
+      if (x.uid !== me.uid) {
+        const b = document.createElement('button'); b.textContent = x.blocked ? 'Fur' : 'Xaddid'; if (!x.blocked) b.className = 'danger';
+        b.onclick = async () => { try { await updateDoc(d.ref, { blocked: !x.blocked }); loadAdmin(); } catch (e) { alert(e.message); } };
+        r.appendChild(b);
+      }
+      box.appendChild(r);
+    });
+  } catch (e) { box.textContent = 'Khalad: ' + e.message; }
+}
+
+// ---------- Kooxo (Groups) ----------
+function setGAv(el, name, photo) {
+  el.style.backgroundImage = photo ? 'url(' + photo + ')' : '';
+  el.textContent = photo ? '' : '👥';
+}
+function chatInfo() {
+  if (!curChat) return;
+  if (curChat.group) openGroupInfo(curChat.cid); else showProfile(curChat.other);
+}
+function watchGroups() {
+  if (unsubG) unsubG();
+  unsubG = onSnapshot(query(collection(db, 'groups'), where('members', 'array-contains', me.uid)), snap => {
+    groupsData = [];
+    snap.forEach(d => groupsData.push(Object.assign({ id: d.id }, d.data())));
+    renderList();
+    if ($('ginfo').style.display === 'flex' && curGrp) {
+      const g = groupsData.find(x => x.id === curGrp);
+      if (g) renderGInfo(g); else show('app');
+    }
+  }, () => {});
+}
+function renderPick(box, arr, sel) {
+  box.innerHTML = '';
+  if (!arr.length) { box.innerHTML = '<div class=soon>Saaxiib ma jiro</div>'; return; }
+  arr.forEach(c => {
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('div'); a.className = 'av'; setAv(a, c.name, (userCache[c.uid] || {}).photo);
+    const n = document.createElement('b'); n.textContent = c.name; n.style.flex = '1';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.style.cssText = 'width:24px;height:24px;padding:0;box-shadow:none';
+    cb.checked = sel.has(c.uid);
+    cb.onchange = () => { if (cb.checked) sel.add(c.uid); else sel.delete(c.uid); };
+    r.onclick = e => { if (e.target !== cb) { cb.checked = !cb.checked; cb.onchange(); } };
+    r.append(a, n, cb); box.appendChild(r);
+  });
+}
+$('newGrp').onclick = () => {
+  ngSel = new Set(); ngPhoto = ''; $('ngname').value = '';
+  setGAv($('ngav'), '', '');
+  renderPick($('nglist'), chats, ngSel);
+  show('ngrp');
+};
+$('backNG').onclick = () => show('app');
+$('ngimg').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; resizeSquare(f, 256, d => { ngPhoto = d; setGAv($('ngav'), '', d); }); };
+$('ngcreate').onclick = async () => {
+  const name = $('ngname').value.trim();
+  if (!name) { alert('Qor magaca kooxda'); return; }
+  if (ngSel.size < 1) { alert('Dooro ugu yaraan hal xubin'); return; }
+  if (ngSel.size > 49) { alert('Ugu badnaan 49 xubin'); return; }
+  try {
+    const ref = await addDoc(collection(db, 'groups'), {
+      name, photo: ngPhoto, about: '', members: [me.uid].concat(Array.from(ngSel)),
+      admins: [me.uid], createdBy: me.uid, createdAt: serverTimestamp()
+    });
+    toast('Kooxda waa la abuuray');
+    openChat(ref.id, name, true, ngPhoto);
+  } catch (e) { alert(e.message); }
+};
+
+function openGroupInfo(gid) {
+  curGrp = gid;
+  const g = groupsData.find(x => x.id === gid);
+  if (!g) return;
+  renderGInfo(g);
+  show('ginfo');
+}
+function refreshGInfo() {
+  if ($('ginfo').style.display === 'flex' && curGrp) { const g = groupsData.find(x => x.id === curGrp); if (g) renderGInfo(g); }
+}
+function renderGInfo(g) {
+  const amAdmin = g.admins.includes(me.uid);
+  setGAv($('giav'), g.name, g.photo);
+  $('giname').textContent = g.name;
+  $('gicount').textContent = g.members.length + ' xubnood';
+  $('gilabel').style.display = amAdmin ? 'inline-block' : 'none';
+  $('gieditbox').style.display = amAdmin ? 'block' : 'none';
+  if (document.activeElement !== $('gieditname')) $('gieditname').value = g.name;
+  $('giaddbtn').style.display = amAdmin ? 'inline-block' : 'none';
+  $('gidel').style.display = g.createdBy === me.uid ? 'inline-block' : 'none';
+  const box = $('gilist'); box.innerHTML = '';
+  g.members.forEach(uid => {
+    ensureUser(uid);
+    const u = userCache[uid] || {};
+    const fr = chats.find(c => c.uid === uid);
+    const nm = uid === me.uid ? 'Adiga' : (u.name || (fr && fr.name) || 'Qof');
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('div'); a.className = 'av'; setAv(a, nm, u.photo);
+    const w = document.createElement('div'); w.style.flex = '1';
+    const n = document.createElement('b'); n.textContent = nm; n.style.display = 'block';
+    const sub = document.createElement('div'); sub.className = 'mut'; sub.style.fontSize = '13px'; sub.textContent = u.about || '';
+    w.append(n, sub);
+    r.append(a, w);
+    if (g.admins.includes(uid)) { const bd = document.createElement('span'); bd.className = 'gbadge'; bd.textContent = 'Admin'; r.appendChild(bd); }
+    if (amAdmin && uid !== me.uid) {
+      if (!g.admins.includes(uid)) {
+        const b1 = document.createElement('button'); b1.textContent = 'Admin'; b1.style.padding = '6px 10px'; b1.style.fontSize = '12px';
+        b1.onclick = () => updateDoc(doc(db, 'groups', g.id), { admins: g.admins.concat([uid]) }).catch(e => alert(e.message));
+        r.appendChild(b1);
+      }
+      const b2 = document.createElement('button'); b2.textContent = 'Ka saar'; b2.className = 'danger'; b2.style.padding = '6px 10px'; b2.style.fontSize = '12px';
+      b2.onclick = () => { if (confirm('Ka saar ' + nm + '?')) updateDoc(doc(db, 'groups', g.id), { members: g.members.filter(x => x !== uid), admins: g.admins.filter(x => x !== uid) }).catch(e => alert(e.message)); };
+      r.appendChild(b2);
+    }
+    box.appendChild(r);
+  });
+}
+$('backGI').onclick = () => show('chat');
+$('gisave').onclick = async () => {
+  const name = $('gieditname').value.trim(); if (!name) return;
+  try { await updateDoc(doc(db, 'groups', curGrp), { name }); $('cname').textContent = name; toast('La keydiyay'); } catch (e) { alert(e.message); }
+};
+$('giimg').onchange = e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  resizeSquare(f, 256, d => { updateDoc(doc(db, 'groups', curGrp), { photo: d }).catch(err => alert(err.message)); });
+};
+$('giaddbtn').onclick = () => {
+  const g = groupsData.find(x => x.id === curGrp); if (!g) return;
+  gaSel = new Set();
+  renderPick($('galist'), chats.filter(c => !g.members.includes(c.uid)), gaSel);
+  $('gadd').style.display = 'flex';
+};
+$('gaclose').onclick = () => { $('gadd').style.display = 'none'; };
+$('gaok').onclick = async () => {
+  const g = groupsData.find(x => x.id === curGrp); if (!g) return;
+  const add = Array.from(gaSel);
+  if (!add.length) { $('gadd').style.display = 'none'; return; }
+  if (g.members.length + add.length > 50) { alert('Ugu badnaan 50 xubin'); return; }
+  try { await updateDoc(doc(db, 'groups', curGrp), { members: g.members.concat(add) }); $('gadd').style.display = 'none'; toast('La daray'); }
+  catch (e) { alert(e.message); }
+};
+$('gileave').onclick = async () => {
+  const g = groupsData.find(x => x.id === curGrp); if (!g) return;
+  if (g.admins.length === 1 && g.admins[0] === me.uid && g.members.length > 1) { alert('Marka hore xubin kale Admin ka dhig, kadibna ka bax'); return; }
+  if (!confirm('Ka bax kooxda?')) return;
+  try {
+    if (unsubC) unsubC();
+    await updateDoc(doc(db, 'groups', curGrp), { members: g.members.filter(x => x !== me.uid), admins: g.admins.filter(x => x !== me.uid) });
+    show('app'); tab('chats');
+  } catch (e) { alert(e.message); }
+};
+$('gidel').onclick = async () => {
+  if (!confirm('Tirtir kooxda dhammaantiis?')) return;
+  try { if (unsubC) unsubC(); await deleteDoc(doc(db, 'groups', curGrp)); show('app'); tab('chats'); }
+  catch (e) { alert(e.message); }
+};
+
+// ---------- Wicitaan (cod iyo video) ----------
+const RTC_CFG = { iceServers: [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turns:openrelay.metered.ca:443'], username: 'openrelayproject', credential: 'openrelayproject' }
+] };
+let pc = null, localStream = null, callId = null, callUnsub = null, candUnsub = null, callsUnsub = null, callTimer = null, ringTimeout = null, secs = 0;
+let candQueue = [], remoteQueue = [], candReady = false, callsData = [], incomingId = null;
+const callDoc = id => doc(db, 'calls', id);
+const callStat = t => { $('cstat').textContent = t; };
+
+function openCallUI(name, photo, video) {
+  $('callui').style.display = 'flex';
+  $('cname2').textContent = name;
+  setAv($('cav'), name, photo);
+  $('cav').style.display = video ? 'none' : 'flex';
+  $('lv').style.display = video ? 'block' : 'none';
+  $('ccam').style.display = video ? 'inline-block' : 'none';
+  $('cmute').textContent = '🎤'; $('ccam').textContent = '🎥';
+}
+function cleanupCall() {
+  clearTimeout(ringTimeout); clearInterval(callTimer); callTimer = null;
+  if (callUnsub) callUnsub();
+  if (candUnsub) candUnsub();
+  callUnsub = null; candUnsub = null;
+  try { if (pc) pc.close(); } catch (e) {}
+  pc = null;
+  if (localStream) localStream.getTracks().forEach(t => t.stop());
+  localStream = null; callId = null; candQueue = []; remoteQueue = []; candReady = false;
+  $('rv').srcObject = null; $('lv').srcObject = null;
+  $('callui').style.display = 'none';
+}
+function startTimer() {
+  if (callTimer) return;
+  secs = 0; clearTimeout(ringTimeout);
+  callTimer = setInterval(() => {
+    secs++;
+    callStat(String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0'));
+  }, 1000);
+}
+function sendCand(id, c) {
+  if (!candReady) { candQueue.push(c); return; }
+  addDoc(collection(db, 'calls', id, 'cands'), { from: me.uid, c: JSON.stringify(c) }).catch(() => {});
+}
+function flushCands(id) { candReady = true; const q = candQueue; candQueue = []; q.forEach(c => sendCand(id, c)); }
+function flushRemote() { const q = remoteQueue; remoteQueue = []; q.forEach(c => pc.addIceCandidate(c).catch(() => {})); }
+function listenCands(id) {
+  candUnsub = onSnapshot(collection(db, 'calls', id, 'cands'), snap => {
+    snap.docChanges().forEach(ch => {
+      if (ch.type !== 'added') return;
+      const d = ch.doc.data();
+      if (d.from === me.uid) return;
+      const c = JSON.parse(d.c);
+      if (pc && pc.remoteDescription) pc.addIceCandidate(c).catch(() => {});
+      else remoteQueue.push(c);
+    });
+  });
+}
+function makePC(id) {
+  pc = new RTCPeerConnection(RTC_CFG);
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  pc.ontrack = e => { $('rv').srcObject = e.streams[0]; const p = $('rv').play(); if (p && p.catch) p.catch(() => {}); };
+  pc.onicecandidate = e => { if (e.candidate) sendCand(id, e.candidate); };
+  pc.oniceconnectionstatechange = () => {
+    if (!pc) return;
+    const s = pc.iceConnectionState;
+    if (s === 'checking') callStat('Waa la isku xirayaa...');
+    if (s === 'failed') callStat('Xiriirku wuu fashilmay. Shabakadu ma oggola, isku day Wi-Fi.');
+    if (s === 'disconnected') callStat('Xiriirku wuu go-ay');
+  };
+  pc.onconnectionstatechange = () => { if (pc && pc.connectionState === 'connected') startTimer(); };
+}
+async function getMedia(video) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('Browser-kan ma taageero wicitaanka'); return null; }
+  try { return await navigator.mediaDevices.getUserMedia({ audio: true, video: video ? { facingMode: 'user' } : false }); }
+  catch (e) {
+    alert(e.name === 'NotFoundError' ? 'Mikrafoon ama kamarad lama helin' : 'Ogolow mikrafoonka iyo kamerada (Chrome, Site settings)');
+    return null;
+  }
+}
+async function startCall(type, other, name) {
+  if (callId) { alert('Wicitaan ayaa socda'); return; }
+  const video = type === 'video';
+  localStream = await getMedia(video);
+  if (!localStream) return;
+  const id = pid(me.uid, other) + '_' + Date.now();
+  callId = id;
+  openCallUI(name, (userCache[other] || {}).photo, video);
+  $('lv').srcObject = localStream;
+  callStat('Waa la wicayaa...');
+  makePC(id);
+  try {
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    await setDoc(callDoc(id), {
+      caller: me.uid, callee: other, members: [me.uid, other], pair: pid(me.uid, other), type, status: 'ringing',
+      offer: { type: offer.type, sdp: offer.sdp },
+      names: { [me.uid]: myName(), [other]: name }, createdAt: serverTimestamp()
+    });
+  } catch (e) { alert('Wicitaanka ma bilaabmin: ' + e.message); cleanupCall(); return; }
+  flushCands(id);
+  listenCands(id);
+  callUnsub = onSnapshot(callDoc(id), async snap => {
+    const d = snap.data(); if (!d || callId !== id) return;
+    if (d.status === 'accepted' && d.answer && pc && !pc.remoteDescription) {
+      await pc.setRemoteDescription(d.answer); flushRemote(); callStat('Waa la xiriiray...');
+    }
+    if (['declined', 'ended', 'missed'].includes(d.status)) {
+      callStat(d.status === 'declined' ? 'Waa la diiday' : 'Dhammaaday');
+      setTimeout(cleanupCall, 800);
+    }
+  });
+  ringTimeout = setTimeout(() => {
+    if (callId === id && pc && !pc.remoteDescription) updateDoc(callDoc(id), { status: 'missed' }).catch(() => {});
+  }, 45000);
+}
+function showIncoming(id, d) {
+  incomingId = id;
+  const name = (d.names && d.names[d.caller]) || 'Qof';
+  ensureUser(d.caller);
+  setAv($('inav'), name, (userCache[d.caller] || {}).photo);
+  $('inname').textContent = name;
+  $('intype').textContent = d.type === 'video' ? 'Wicitaan video' : 'Wicitaan cod';
+  $('incoming').style.display = 'flex';
+  if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 400]);
+}
+function hideIncoming() { incomingId = null; $('incoming').style.display = 'none'; }
+$('inno').onclick = () => { const id = incomingId; hideIncoming(); if (id) updateDoc(callDoc(id), { status: 'declined' }).catch(() => {}); };
+$('inyes').onclick = () => acceptCall(incomingId);
+async function acceptCall(id) {
+  if (!id) return;
+  const snap = await getDoc(callDoc(id)); const d = snap.data();
+  hideIncoming();
+  if (!d || d.status !== 'ringing') return;
+  const video = d.type === 'video';
+  localStream = await getMedia(video);
+  if (!localStream) { updateDoc(callDoc(id), { status: 'declined' }).catch(() => {}); return; }
+  callId = id;
+  const name = (d.names && d.names[d.caller]) || 'Qof';
+  openCallUI(name, (userCache[d.caller] || {}).photo, video);
+  $('lv').srcObject = localStream;
+  callStat('Waa la xiriiray...');
+  makePC(id);
+  flushCands(id);
+  listenCands(id);
+  try {
+    await pc.setRemoteDescription(d.offer); flushRemote();
+    const ans = await pc.createAnswer();
+    await pc.setLocalDescription(ans);
+    await updateDoc(callDoc(id), { status: 'accepted', answer: { type: ans.type, sdp: ans.sdp } });
+  } catch (e) { alert('Wicitaanka ma aqbalmin: ' + e.message); cleanupCall(); return; }
+  callUnsub = onSnapshot(callDoc(id), s => {
+    const x = s.data();
+    if (x && callId === id && ['ended', 'missed', 'declined'].includes(x.status)) { callStat('Dhammaaday'); setTimeout(cleanupCall, 800); }
+  });
+}
+$('cend').onclick = () => {
+  const id = callId;
+  if (id) updateDoc(callDoc(id), { status: (pc && pc.remoteDescription) ? 'ended' : 'missed' }).catch(() => {});
+  cleanupCall();
+};
+$('cmute').onclick = () => {
+  const t = localStream && localStream.getAudioTracks()[0]; if (!t) return;
+  t.enabled = !t.enabled; $('cmute').textContent = t.enabled ? '🎤' : '🔇';
+};
+$('ccam').onclick = () => {
+  const t = localStream && localStream.getVideoTracks()[0]; if (!t) return;
+  t.enabled = !t.enabled; $('ccam').textContent = t.enabled ? '🎥' : '🚫';
+};
+$('vcall').onclick = () => { if (curChat && !curChat.group) startCall('audio', curChat.other, curChat.name); };
+$('vidcall').onclick = () => { if (curChat && !curChat.group) startCall('video', curChat.other, curChat.name); };
+function watchCalls() {
+  if (callsUnsub) callsUnsub();
+  callsUnsub = onSnapshot(query(collection(db, 'calls'), where('members', 'array-contains', me.uid)), snap => {
+    callsData = [];
+    snap.forEach(d => callsData.push(Object.assign({ id: d.id }, d.data())));
+    renderCalls();
+    snap.docChanges().forEach(ch => {
+      if (ch.type === 'removed') return;
+      const d = ch.doc.data();
+      if (d.callee === me.uid && d.status === 'ringing' && !callId && !incomingId && d.createdAt && Date.now() - d.createdAt.toMillis() < 60000) showIncoming(ch.doc.id, d);
+      if (incomingId === ch.doc.id && d.status !== 'ringing') hideIncoming();
+    });
+  });
+}
+function renderCalls() {
+  const box = $('clist'); if (!box) return;
+  box.innerHTML = '';
+  const tmv = c => c.createdAt ? c.createdAt.toMillis() : Date.now();
+  const arr = callsData.slice().sort((a, b) => tmv(b) - tmv(a));
+  if (!arr.length) { box.innerHTML = '<div class=soon>Wicitaan ma jiro.</div>'; return; }
+  arr.forEach(c => {
+    const out = c.caller === me.uid;
+    const other = out ? c.callee : c.caller;
+    const name = (c.names && c.names[other]) || 'Qof';
+    ensureUser(other);
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('div'); a.className = 'av'; setAv(a, name, (userCache[other] || {}).photo);
+    const w = document.createElement('div'); w.style.flex = '1';
+    const n = document.createElement('b'); n.textContent = name; n.style.display = 'block';
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-size:13px;color:' + (c.status === 'missed' && !out ? '#d32f2f' : '#6b7d99');
+    const when = c.createdAt ? new Date(c.createdAt.toMillis()).toLocaleString([], { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }) : '';
+    const st = c.status === 'missed' ? 'La waayay' : c.status === 'declined' ? 'La diiday' : c.status === 'ringing' ? 'Wicitaan' : 'Dhammaaday';
+    sub.textContent = (out ? '↗ ' : '↙ ') + (c.type === 'video' ? 'Video' : 'Cod') + ' · ' + st + ' · ' + when;
+    w.append(n, sub);
+    const b1 = document.createElement('button'); b1.textContent = c.type === 'video' ? '🎥' : '📞';
+    b1.onclick = () => startCall(c.type, other, name);
+    r.append(a, w, b1); box.appendChild(r);
+  });
+}
+</script>
+</body>
+</html>
